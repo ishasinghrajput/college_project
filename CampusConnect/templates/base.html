@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusHelpHub</title>
+
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+
+.navbar{
+    background: #9ab1fc;
+    background: radial-gradient(circle, rgba(154, 177, 252, 1) 0%, rgba(178, 196, 253, 1) 24%, rgba(255, 255, 255, 1) 100%);
+    padding:15px 30px;
+    margin:10px 20px;
+    border-radius:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+
+
+.logo-circle{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#6c63ff,#5f8dff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:20px;
+}
+
+.logo-title{
+    font-size:24px;
+    font-weight:800;
+}
+
+.logo-title span{
+    color:#6c63ff;
+}
+
+
+
+.nav-link{
+    color:#222 !important;
+    font-weight:600;
+    margin:0 10px;
+}
+
+.nav-link:hover{
+    color:#6c63ff !important;
+}
+
+.active-link{
+    color:#6c63ff !important;
+    border-bottom:2px solid #6c63ff;
+}
+
+
+.login-btn{
+    border:2px solid #6c63ff;
+    color:#6c63ff;
+    border-radius:12px;
+    font-weight:600;
+    padding:8px 18px;
+}
+
+.login-btn:hover{
+    background:#6c63ff;
+    color:white;
+}
+
+.signup-btn{
+    background:linear-gradient(135deg,#6c63ff,#5f8dff);
+    color:white;
+    border-radius:12px;
+    font-weight:600;
+    padding:8px 18px;
+}
+
+.signup-btn:hover{
+    color:white;
+}
+</style>
+{% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light py-4">
+
+    <div class="container-fluid px-lg-4">
+
+        <!-- LOGO -->
+
+        <a class="navbar-brand d-flex align-items-center"
+           href="#">
+
+            <div class="logo-circle">
+
+                <!-- Bootstrap Icon -->
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+            </div>
+
+            <div class="ms-3">
+
+                <h3 class="logo-title mb-0">
+                    Campus <span>Help Hub</span>
+                </h3>
+
+                <small class="text-muted">
+                    Connect • Learn • Grow
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- MENU -->
+
+        <ul class="navbar-nav mx-auto">
+
+            <li class="nav-item">
+                <a class="nav-link active-link"
+                   href="{% url 'home' %}">
+                    Home
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="#">
+                    Help Others
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="#">
+                    My Posts
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="#">
+                    Chatroom
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{% url 'dashboard' %}">
+                    Dashboard
+                </a>
+            </li>
+
+        </ul>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="d-flex align-items-center">
+
+            <!-- BUTTONS -->
+
+            <a href="{% url 'login' %}"
+                class="btn login-btn ms-3">
+                login
+        </a>
+
+            <a href="{% url 'signup' %}"
+               class="btn signup-btn ms-3">
+
+                Signup
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+{% block content %}
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}
+
+</body>
+</html>
