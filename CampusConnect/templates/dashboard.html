@@ -1,116 +1,27 @@
 {% extends 'base.html' %}
 
-{% block extra_css %}
-<style>
-
-body{
-    background:#f5f7ff;
-}
-
-
-
-/* CARD */
-
-.card{
-    border:none;
-    border-radius:20px;
-    transition:0.3s;
-    background:white;
-    box-shadow:0 4px 12px rgba(0,0,0,0.06);
-    background:radial-gradient(circle,
-    rgba(166,181,237,1) 0%,
-    rgba(233,235,242,1) 100%);
-}
-
-
-.card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 8px 20px rgba(108,99,255,0.15);
-}
-
-
-
-/* CARD BODY */
-
-.card-body{
-    padding:25px;
-}
-
-
-
-/* TITLE */
-
-.card h4{
-    color:#222;
-    margin-top:10px;
-    margin-bottom:15px;
-}
-
-
-
-/* DESCRIPTION */
-
-.card p{
-    font-size:15px;
-    line-height:1.7;
-}
-
-
-
-/* BADGE */
-
-.badge{
-    padding:8px 14px;
-    border-radius:10px;
-    font-size:13px;
-    font-weight:600;
-}
-
-
-
-/* SMALL TEXT */
-
-.card small{
-    font-size:13px;
-}
-
-
-
-/* HELP BUTTON */
-
-.help-btn{
-    background:linear-gradient(135deg,#6c63ff,#5f8dff);
-    color:white;
-    border:none;
-    border-radius:12px;
-    padding:10px 18px;
-    font-size:14px;
-    font-weight:600;
-    margin-top:20px;
-    transition:0.3s;
-}
-
-
-.help-btn:hover{
-    transform:scale(1.03);
-    color:white;
-}
-
-</style>
-{% endblock %}
-
-
-
 {% block content %}
 
-<!-- DASHBOARD CARDS SECTION -->
+<!-- SUCCESS/ERROR POPUP MESSAGE AFTER CLICKING HELP NOW -->
+{% if messages %}
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: 12px;">
+        <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
+<!-- DASHBOARD CARDS SECTION -->
 <div class="container mt-5">
 
     <div class="row g-4">
 
-        <!-- CARD 1 -->
-
+        <!-- DYNAMIC DATABASE LOOP -->
+        {% for post in all_posts %}
         <div class="col-md-6 col-lg-4">
 
             <div class="card h-100">
@@ -119,158 +30,92 @@ body{
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
 
-                        <span class="badge bg-primary">
-                            Notes Help
+                        <span class="badge {% if post.category == 'Coding' %}bg-success{% elif post.category == 'Notes' %}bg-primary{% else %}bg-info text-dark{% endif %}">
+                            {{ post.category }} Help
                         </span>
 
                         <small class="text-muted">
-                            13 May 2026
+                            {{ post.created_at|date:"d M Y" }}
                         </small>
 
                     </div>
 
                     <h4 class="fw-bold">
-                        Need DBMS Notes
+                        {{ post.title }}
                     </h4>
 
                     <p class="text-muted">
-
-                        Looking for Unit 3 DBMS handwritten notes
-                        for upcoming internal exam.
-
+                        {{ post.description }}
                     </p>
 
                     <div class="d-flex justify-content-between mt-4">
 
                         <small>
-                            ⏰ 10:30 AM
+                            ⏰ {{ post.created_at|time:"h:i A" }}
                         </small>
 
                         <small class="fw-semibold">
-                            Posted by Rahul
+                            Posted by {{ post.student.username }}
                         </small>
 
                     </div>
 
-                    <button class="btn help-btn w-100">
-                        Help Now
-                    </button>
+                    <!-- HELP REQUEST ACTION FORM -->
+                    <form method="POST" action="{% url 'send_help_request' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn help-btn w-100">
+                            Help Now
+                        </button>
+                    </form>
 
                 </div>
 
             </div>
 
         </div>
+        {% empty %}
+        
+        <!-- AGAR DATABASE MEIN KOI POST NAHI HAI TOH YEH DUMMY CARDS DIKHENGE -->
 
-
-
-        <!-- CARD 2 -->
-
+        <!-- DUMMY CARD 1 -->
         <div class="col-md-6 col-lg-4">
-
             <div class="card h-100">
-
                 <div class="card-body">
-
                     <div class="d-flex justify-content-between align-items-center mb-3">
-
-                        <span class="badge bg-success">
-                            Coding Help
-                        </span>
-
-                        <small class="text-muted">
-                            13 May 2026
-                        </small>
-
+                        <span class="badge bg-primary">Notes Help</span>
+                        <small class="text-muted">13 May 2026</small>
                     </div>
-
-                    <h4 class="fw-bold">
-                        Python Assignment
-                    </h4>
-
-                    <p class="text-muted">
-
-                        Need help in creating a login system
-                        using Django models and sessions.
-
-                    </p>
-
+                    <h4 class="fw-bold">Need DBMS Notes</h4>
+                    <p class="text-muted">Looking for Unit 3 DBMS handwritten notes for upcoming internal exam.</p>
                     <div class="d-flex justify-content-between mt-4">
-
-                        <small>
-                            ⏰ 12:15 PM
-                        </small>
-
-                        <small class="fw-semibold">
-                            Posted by Ankit
-                        </small>
-
+                        <small>⏰ 10:30 AM</small>
+                        <small class="fw-semibold">Posted by Rahul</small>
                     </div>
-
-                    <button class="btn help-btn w-100">
-                        Help Now
-                    </button>
-
+                    <button class="btn help-btn w-100" onclick="alert('Dummy Mode: Verification alert triggered!')">Help Now</button>
                 </div>
-
             </div>
-
         </div>
 
-
-
-        <!-- CARD 3 -->
-
+        <!-- DUMMY CARD 2 -->
         <div class="col-md-6 col-lg-4">
-
             <div class="card h-100">
-
                 <div class="card-body">
-
                     <div class="d-flex justify-content-between align-items-center mb-3">
-
-                        <span class="badge bg-info text-dark">
-                            Coding Help
-                        </span>
-
-                        <small class="text-muted">
-                            13 May 2026
-                        </small>
-
+                        <span class="badge bg-success">Coding Help</span>
+                        <small class="text-muted">13 May 2026</small>
                     </div>
-
-                    <h4 class="fw-bold">
-                        JavaScript Questions
-                    </h4>
-
-                    <p class="text-muted">
-
-                        Need help to solve JavaScript coding errors
-                        and debugging issues.
-
-                    </p>
-
+                    <h4 class="fw-bold">Python Assignment</h4>
+                    <p class="text-muted">Need help in creating a login system using Django models and sessions.</p>
                     <div class="d-flex justify-content-between mt-4">
-
-                        <small>
-                            ⏰ 08:20 AM
-                        </small>
-
-                        <small class="fw-semibold">
-                            Posted by Isha
-                        </small>
-
+                        <small>⏰ 12:15 PM</small>
+                        <small class="fw-semibold">Posted by Ankit</small>
                     </div>
-
-                    <button class="btn help-btn w-100">
-                        Help Now
-                    </button>
-
+                    <button class="btn help-btn w-100" onclick="alert('Dummy Mode: Verification alert triggered!')">Help Now</button>
                 </div>
-
             </div>
-
         </div>
+
+        {% endfor %}
 
     </div>
 

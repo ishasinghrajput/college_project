@@ -10,5 +10,15 @@ urlpatterns = [
     path('hellpothers/', views.helpothers, name='helpothers'),
     path('login/', views.login_page, name='login'),
     path('signup/', views.signup_page, name='signup'),
+    
+    # === Jaroori Paths Jo Add Kiye Hain ===
+    
+    # 1. Naya Post (Need Form) open karne aur save karne ke liye
+    path('post-need/', views.post_need, name='post_need'),
+    
+    # 2. Help Now button click hone par request bhejne ke liye (Post ID ke saath)
+    path('send-help-request/<int:post_id>/', views.send_help_request, name='send_help_request'),
+    
+    # 3. Securely logout karne ke liye
+    path('logout/', views.logout_view, name='logout'),
 ]
-
