@@ -60,58 +60,35 @@
 
                     </div>
 
-                    <!-- HELP REQUEST ACTION FORM -->
-                    <form method="POST" action="{% url 'send_help_request' post.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn help-btn w-100">
-                            Help Now
-                        </button>
-                    </form>
+                    <!-- LOGIC CONDITION: CHECK IF POST IS CREATED BY LOGGED IN USER -->
+                    {% if post.student.id == request.session.student_id %}
+                        <!-- if true: Hide button and show static badge text -->
+                        <div class="text-center mt-4 p-2 bg-light rounded-3 text-muted fw-bold border" style="font-size: 14px;">
+                            <i class="bi bi-person-check-fill text-secondary me-1"></i> Your Active Request
+                        </div>
+                    {% else %}
+                        <form method="POST" action="{% url 'send_help_request' post.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn help-btn w-100">
+                                Help Now
+                            </button>
+                        </form>
+                    {% endif %}
 
                 </div>
 
             </div>
 
         </div>
+        
         {% empty %}
         
-        <!-- AGAR DATABASE MEIN KOI POST NAHI HAI TOH YEH DUMMY CARDS DIKHENGE -->
-
-        <!-- DUMMY CARD 1 -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-primary">Notes Help</span>
-                        <small class="text-muted">13 May 2026</small>
-                    </div>
-                    <h4 class="fw-bold">Need DBMS Notes</h4>
-                    <p class="text-muted">Looking for Unit 3 DBMS handwritten notes for upcoming internal exam.</p>
-                    <div class="d-flex justify-content-between mt-4">
-                        <small>⏰ 10:30 AM</small>
-                        <small class="fw-semibold">Posted by Rahul</small>
-                    </div>
-                    <button class="btn help-btn w-100" onclick="alert('Dummy Mode: Verification alert triggered!')">Help Now</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- DUMMY CARD 2 -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-success">Coding Help</span>
-                        <small class="text-muted">13 May 2026</small>
-                    </div>
-                    <h4 class="fw-bold">Python Assignment</h4>
-                    <p class="text-muted">Need help in creating a login system using Django models and sessions.</p>
-                    <div class="d-flex justify-content-between mt-4">
-                        <small>⏰ 12:15 PM</small>
-                        <small class="fw-semibold">Posted by Ankit</small>
-                    </div>
-                    <button class="btn help-btn w-100" onclick="alert('Dummy Mode: Verification alert triggered!')">Help Now</button>
-                </div>
+        <!-- if post is empty -->
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-white rounded-4 shadow-sm border" style="max-width: 500px; margin: 0 auto;">
+                <i class="bi bi-clipboard-x text-muted mb-3" style="font-size: 3rem; display: block;"></i>
+                <h5 class="fw-bold text-dark">No Active Help Requests</h5>
+                <p class="text-muted small mb-0">Currently there are no help requests posted on campus. Be the first one to ask for help!</p>
             </div>
         </div>
 
