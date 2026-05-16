@@ -94,7 +94,7 @@ def send_help_request(request, post_id):
 def logout_view(request):
     request.session.flush()  # Clear sessions data securely
     messages.success(request, "You have been logged out successfully.")
-    return redirect('home')
+    return redirect('login')
 
 
 # LOGIN PROCESS
@@ -111,7 +111,7 @@ def login_page(request):
         if student:
             request.session['student_id'] = student.id
             request.session['student_name'] = student.username
-            messages.success(request, "You have been logged out successfully.")
+            messages.success(request, "Welcome  Ready to connect and help others?")
             return redirect('dashboard')
         else:
             messages.error(

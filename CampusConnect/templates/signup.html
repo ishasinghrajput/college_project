@@ -64,7 +64,17 @@
 {% endblock %}
 
 {% block content %}
-
+{% if messages %}
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: 12px;">
+        <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center">
 
     <div class="card shadow-lg p-4 signup-card">
