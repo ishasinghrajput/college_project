@@ -142,7 +142,7 @@
                 <li class="nav-item">
                     <a class="nav-link active-link" href="{% url 'dashboard' %}">All Feed Requests</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="#">My Posts</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'myposts' %}">My Posts</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'post_need' %}">Post Need</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Chatroom</a></li>
             </ul>
@@ -222,13 +222,23 @@
         </div>
     </nav>
     {% endif %}
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     {% block content %}
     <!-- Content cards will display here -->
-    <script src="https://jsdelivr.net"></script>
+
 
     {% endblock %}
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
