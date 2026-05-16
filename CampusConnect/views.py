@@ -9,7 +9,16 @@ def home(request):
 
 
 def myposts(request):
-    return render(request, 'myposts.html')
+    if 'student_id' not in request.session:
+        return redirect('login')
+        
+    logged_in_id = request.session['student_id']
+    current_student = Student.objects.get(id=logged_in_id)
+    context = {
+        'student': current_student,
+    }
+    
+    return render(request, 'myposts.html', context)
 
 
 def profile(request):
