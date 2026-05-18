@@ -9,7 +9,16 @@ def home(request):
 
 
 def myposts(request):
-    return render(request, 'myposts.html')
+    if 'student_id' not in request.session:
+        return redirect('login')
+        
+    logged_in_id = request.session['student_id']
+    current_student = Student.objects.get(id=logged_in_id)
+    context = {
+        'student': current_student,
+    }
+    
+    return render(request, 'myposts.html', context)
 
 
 def profile(request):
@@ -65,7 +74,6 @@ def post_need(request):
         messages.success(request, "Your help request has been posted successfully!")
         return redirect('dashboard')
         
-    # FIX: Context me 'student' bhej rahe hain taaki navbar dashboard wala hi rahe
     context = {
         'student': current_student
     }
@@ -94,6 +102,7 @@ def send_help_request(request, post_id):
 # LOGOUT CONTROLLER
 def logout_view(request):
     request.session.flush()  # Clear sessions data securely
+    messages.success(request, "You have been logged out successfully.")
     return redirect('login')
 
 
@@ -111,6 +120,7 @@ def login_page(request):
         if student:
             request.session['student_id'] = student.id
             request.session['student_name'] = student.username
+            messages.success(request, "Welcome  Ready to connect and help others?")
             return redirect('dashboard')
         else:
             messages.error(
@@ -147,3 +157,6 @@ def signup_page(request):
         return redirect('login')
 
     return render(request, 'signup.html')
+
+
+
