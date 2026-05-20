@@ -14,7 +14,6 @@ class Student(models.Model):
         return self.username
 
 
-from django.db import models
 
 class Post(models.Model):
     # Fixed Category Choices as per your project flow
