@@ -87,7 +87,7 @@ def send_help_request(request, post_id):
         return redirect('login')
         
     helper_id = request.session['student_id']
-    post_obj = get_object_or_400(Post, id=post_id)
+    post_obj = get_object_or_404(Post, id=post_id)
     
     # Check: Student khud ke hi post par help click na kare
     if post_obj.student.id == helper_id:
