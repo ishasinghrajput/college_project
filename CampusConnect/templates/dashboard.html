@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- SUCCESS/ERROR POPUP MESSAGE AFTER CLICKING HELP NOW -->
+{% if messages %}
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: 12px;">
+        <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %} 
+
+<!-- DASHBOARD CARDS SECTION -->
+<div class="container mt-5">
+
+    <div class="row g-4">
+
+        <!-- DYNAMIC DATABASE LOOP -->
+        {% for post in all_posts %}
+        <div class="col-md-6 col-lg-4">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <span class="badge {% if post.category == 'Coding' %}bg-success{% elif post.category == 'Notes' %}bg-primary{% else %}bg-info text-dark{% endif %}">
+                            {{ post.category }} Help
+                        </span>
+
+                        <small class="text-muted">
+                            {{ post.created_at|date:"d M Y" }}
+                        </small>
+
+                    </div>
+
+                    <h4 class="fw-bold">
+                        {{ post.title }}
+                    </h4>
+
+                    <p class="text-muted">
+                        {{ post.description }}
+                    </p>
+
+                    <div class="d-flex justify-content-between mt-4">
+
+                        <small>
+                            ⏰ {{ post.created_at|time:"h:i A" }}
+                        </small>
+
+                        <small class="fw-semibold">
+                            Posted by {{ post.student.username }}
+                        </small>
+
+                    </div>
+
+                    <!-- LOGIC CONDITION: CHECK IF POST IS CREATED BY LOGGED IN USER -->
+                    {% if post.student.id == request.session.student_id %}
+                        <!-- if true: Hide button and show static badge text -->
+                        <div class="text-center mt-4 p-2 bg-light rounded-3 text-muted fw-bold border" style="font-size: 14px;">
+                            <i class="bi bi-person-check-fill text-secondary me-1"></i> Your Active Request
+                        </div>
+                    {% else %}
+                        <form method="POST" action="{% url 'send_help_request' post.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn help-btn w-100">
+                                Help Now
+                            </button>
+                        </form>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+        
+        {% empty %}
+        
+        <!-- if post is empty -->
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-white rounded-4 shadow-sm border" style="max-width: 500px; margin: 0 auto;">
+                <i class="bi bi-clipboard-x text-muted mb-3" style="font-size: 3rem; display: block;"></i>
+                <h5 class="fw-bold text-dark">No Active Help Requests</h5>
+                <p class="text-muted small mb-0">Currently there are no help requests posted on campus. Be the first one to ask for help!</p>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

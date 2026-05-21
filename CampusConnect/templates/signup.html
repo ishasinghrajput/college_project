@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}Signup{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    body{
+        background: linear-gradient(135deg,#eef2ff,#f8f9ff);
+    }
+
+    .signup-card{
+        width:450px;
+        border:none;
+        border-radius:25px;
+        transition:0.4s;
+        background:linear-gradient(135deg, #bbc0e5, #ecebff); 
+    }
+
+    .signup-card:hover{
+        transform:translateY(-6px);
+        box-shadow:0 18px 40px rgba(0,0,0,0.12);
+    }
+
+    .form-control{
+        border-radius:12px;
+        padding:12px;
+        border:1px solid #dcdcdc;
+    }
+
+    .form-control:focus{
+        box-shadow:none;
+        border-color:#198754;
+    }
+
+    .signup-btn{
+        border-radius:12px;
+        padding:12px;
+        font-weight:600;
+        transition:0.3s;
+    }
+
+    .signup-btn:hover{
+        transform:scale(1.03);
+    }
+
+    .title-text{
+        color:#4f46e5;   
+    }
+
+    .login-link{
+        text-decoration:none;
+        font-weight:600;
+        transition:0.3s;
+    }
+
+    .login-link:hover{
+        color:#198754;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: 12px;">
+        <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center">
+    <!--SIGNUP CARD-->
+    <div class="card shadow-lg p-4 signup-card">
+
+        <div class="text-center mb-4">
+
+            <h2 class="fw-bold title-text">
+                Create Account
+            </h2>
+
+            <p class="text-muted">
+                Join Campus Help Hub today
+            </p>
+
+        </div>
+        
+
+        <!--SIGNUP FORM-->
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Full Name
+                </label>
+
+                <input type="text"
+                        name="full_name"
+                        class="form-control"
+                        placeholder="Enter full name">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Email
+                </label>
+
+                <input type="email"
+                        name="email"
+                        class="form-control"
+                        placeholder="Enter email">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Username
+                </label>
+
+                <input type="text"
+                        name="username"
+                        class="form-control"
+                        placeholder="Choose username">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Password
+                </label>
+
+                <input type="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Create password">
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Select Role
+                </label>
+
+                <select name="role" class="form-control">
+
+                    <option value="USER">User</option>
+
+                    <option value="STAFF">Staff</option>
+
+                    <option value="ADMIN">Admin</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="d-grid mt-4">
+
+                <button class="btn btn-success signup-btn">
+                    Create Account
+                </button>
+
+            </div>
+
+        </form>
+
+        <div class="text-center mt-4">
+
+            <p class="mb-0">
+                Already have an account?
+
+                <a href="{% url 'login' %}" class="login-link">
+                    Login
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
