@@ -12,7 +12,7 @@ urlpatterns = [
     path('hellpothers/', views.helpothers, name='helpothers'),
     path('login/', views.login_page, name='login'),
     path('signup/', views.signup_page, name='signup'),
-    
+    path('development-team/',views.development_team, name= 'development_team'),
     # === Jaroori Paths Jo Add Kiye Hain ===
     
     # 1. Naya Post (Need Form) open karne aur save karne ke liye

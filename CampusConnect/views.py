@@ -215,4 +215,6 @@ def signup_page(request):
     return render(request, 'signup.html')
 
 
-
+#development team page
+def development_team(request):
+    return render(request, 'development_team.html')
