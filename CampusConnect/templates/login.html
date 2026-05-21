@@ -5,7 +5,7 @@
 {% block extra_css %}
 
 <style>
-
+    
     body{
         background:background: linear-gradient(135deg,#eef2ff,#f8f9ff);
     }
@@ -67,7 +67,8 @@
 {% block content %}
 
 <div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center">
-
+    
+    <!--LOGIN CARD-->
     <div class="card shadow-lg p-4 login-card">
 
         <div class="text-center mb-4">
@@ -81,6 +82,8 @@
             </p>
 
         </div>
+
+        <!--DJANGO MESSAGE ALERTS-->
         {% if messages %}
             <div class="container mt-4">
                 {% for message in messages %}
@@ -93,10 +96,63 @@
             </div>
         {% endif %} 
         
-        
+        <!--LOGIN FORM-->
         <form method="POST">
             {% csrf_token %}
 
+            <!--ROLE SELECTION-->
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Login As
+                </label>
+
+                <div class="d-flex gap-2">
+
+                    <!-- USER -->
+                    <button type="button"
+                            class="btn btn-primary w-100 role-btn"
+                            id="userBtn"
+                            onclick="setRole('USER')">
+
+                        User
+
+                    </button>
+
+                    <!-- STAFF -->
+
+                    <button type="button"
+                            class="btn btn-secondary w-100 role-btn"
+                            id="staffBtn"
+                            onclick="setRole('STAFF')">
+
+                        Staff
+
+                    </button>
+
+                    <!-- ADMIN -->
+
+                    <button type="button"
+                            class="btn btn-secondary w-100 role-btn"
+                            id="adminBtn"
+                            onclick="setRole('ADMIN')">
+
+                        Admin
+
+                    </button>
+
+                </div>
+
+                <!-- HIDDEN INPUT -->
+
+                <input type="hidden"
+                        name="role"
+                        id="role"
+                        value="USER">
+
+            </div>
+
+            <!--USERNAME-->
             <div class="mb-3">
 
                 <label class="form-label fw-semibold">
@@ -110,6 +166,7 @@
 
             </div>
 
+            <!--PASSWORD-->
             <div class="mb-3">
 
                 <label class="form-label fw-semibold">
@@ -148,5 +205,50 @@
     </div>
 
 </div>
+
+<!--ROLE BUTTON-->
+<script>
+
+function setRole(role){
+
+    // hidden input value set
+    document.getElementById("role").value = role;
+
+    // sab buttons reset
+    let buttons = document.querySelectorAll(".role-btn");
+
+    buttons.forEach(btn => {
+
+        btn.classList.remove("btn-primary");
+
+        btn.classList.add("btn-secondary");
+
+    });
+
+    // active button yellow
+    if(role == "USER"){
+
+        document.getElementById("userBtn")
+        .classList.replace("btn-secondary", "btn-primary");
+
+    }
+
+    else if(role == "STAFF"){
+
+        document.getElementById("staffBtn")
+        .classList.replace("btn-secondary", "btn-primary");
+
+    }
+
+    else{
+
+        document.getElementById("adminBtn")
+        .classList.replace("btn-secondary", "btn-primary");
+
+    }
+
+}
+
+</script>
 
 {% endblock %}

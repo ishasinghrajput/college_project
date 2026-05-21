@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Student, Post  # Post table import kar li hai
 
-# Create your views here.
 
+# HOME PAGE
 def home(request):
     return render(request, 'home.html')
 
 
+# MY POSTS PAGE
 def myposts(request):
     if 'student_id' not in request.session:
         return redirect('login')
@@ -47,6 +48,41 @@ def dashboard(request):
     
     return render(request, 'dashboard.html', context)
 
+
+# STAFF DASHBOARD
+def staff_dashboard(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    student = Student.objects.get(
+        id=request.session['student_id']
+    )
+
+    # SECURITY CHECK
+    if student.role != "STAFF":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    return render(request, 'staff_dashboard.html')
+
+
+#ADMIN DASHBOARD  
+def admin_dashboard(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    student = Student.objects.get(
+        id=request.session['student_id']
+    )
+
+    # SECURITY CHECK
+    if student.role != "ADMIN":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    return render(request, 'admin_dashboard.html')
 
 
 # POST A NEED FORM INTERFACE (SAVES NEW REQUEST)
@@ -111,17 +147,34 @@ def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
+        role = request.POST.get('role')
 
         student = Student.objects.filter(
             username=username,
-            password=password
+            password=password,
+            role=role
         ).first()
 
         if student:
+
             request.session['student_id'] = student.id
+
             request.session['student_name'] = student.username
-            messages.success(request, "Welcome  Ready to connect and help others?")
-            return redirect('dashboard')
+
+            request.session['role'] = student.role
+
+            messages.success(request,"Welcome Ready to connect and help others?")
+
+            # ROLE BASED REDIRECT
+
+            if student.role == "USER":
+                return redirect('dashboard')
+
+            elif student.role == "STAFF":
+                return redirect('staff_dashboard')
+
+            elif student.role == "ADMIN":
+                return redirect('admin_dashboard')
         else:
             messages.error(
                 request,
@@ -139,6 +192,7 @@ def signup_page(request):
         email = request.POST.get('email')
         username = request.POST.get('username')
         password = request.POST.get('password')
+        role = request.POST.get('role')
 
         student = Student.objects.filter(username=username).first()
 
@@ -150,8 +204,10 @@ def signup_page(request):
             full_name=full_name,
             email=email,
             username=username,
-            password=password
+            password=password,
+            role=role
         )
+        
 
         messages.success(request, "Account created successfully")
         return redirect('login')

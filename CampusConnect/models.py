@@ -1,6 +1,13 @@
 from django.db import models
 
+
 class Student(models.Model):
+
+    ROLE_CHOICES = (
+        ('USER', 'User'),
+        ('STAFF', 'Staff'),
+        ('ADMIN', 'Admin'),
+    )
 
     full_name = models.CharField(max_length=100)
 
@@ -10,9 +17,14 @@ class Student(models.Model):
 
     password = models.CharField(max_length=100)
 
+    role = models.CharField(
+        max_length=10,
+        choices=ROLE_CHOICES,
+        default='USER'
+    )
+
     def __str__(self):
         return self.username
-
 
 
 class Post(models.Model):

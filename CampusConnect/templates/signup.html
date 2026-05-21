@@ -64,6 +64,7 @@
 {% endblock %}
 
 {% block content %}
+
 {% if messages %}
 <div class="container mt-4">
     {% for message in messages %}
@@ -75,8 +76,9 @@
     {% endfor %}
 </div>
 {% endif %}
-<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center">
 
+<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center">
+    <!--SIGNUP CARD-->
     <div class="card shadow-lg p-4 signup-card">
 
         <div class="text-center mb-4">
@@ -92,7 +94,7 @@
         </div>
         
 
-        
+        <!--SIGNUP FORM-->
         <form method="POST">
             {% csrf_token %}
 
@@ -146,6 +148,26 @@
                         class="form-control"
                         placeholder="Create password">
             </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Select Role
+                </label>
+
+                <select name="role" class="form-control">
+
+                    <option value="USER">User</option>
+
+                    <option value="STAFF">Staff</option>
+
+                    <option value="ADMIN">Admin</option>
+
+                </select>
+
+            </div>
+
 
             <div class="d-grid mt-4">
 
