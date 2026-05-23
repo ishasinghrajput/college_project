@@ -1,17 +1,91 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Dashboard</title>
 
-<div class="container mt-5">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-    <h1>
-        Staff Dashboard
-    </h1>
+<body class="bg-light">
 
-    <p>
-        Welcome Staff Member 👨‍💼
-    </p>
+<div class="container my-5">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">Staff Dashboard</h3>
+
+        <span class="badge bg-primary fs-6">
+            Total Posts: {{ total_posts }}
+        </span>
+    </div>
+
+    <!-- Posts Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-dark text-white">
+            All Student Posts
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Student</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for post in posts %}
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>{{ post.title }}</td>
+
+                            <td>
+                                <span class="badge bg-info text-dark">
+                                    {{ post.category }}
+                                </span>
+                            </td>
+
+                            <td>{{ post.description|truncatechars:60 }}</td>
+
+                            <!-- 🔥 IMPORTANT FIX -->
+                            <td>{{ post.student.username }}</td>
+
+                            <td>{{ post.created_at|date:"d M Y" }}</td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">
+                                No posts found
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
 
 </div>
 
-{% endblock %}
+</body>
+</html>

@@ -49,40 +49,50 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 
-# STAFF DASHBOARD
 def staff_dashboard(request):
 
     if 'student_id' not in request.session:
         return redirect('login')
 
-    student = Student.objects.get(
-        id=request.session['student_id']
-    )
+    student = Student.objects.get(id=request.session['student_id'])
 
-    # SECURITY CHECK
     if student.role != "STAFF":
         messages.error(request, "Access Denied")
         return redirect('dashboard')
 
-    return render(request, 'staff_dashboard.html')
+    # 🔥 THIS IS MISSING (MAIN FIX)
+    posts = Post.objects.all().order_by('-created_at')
+
+    return render(request, 'staff_dashboard.html', {
+        'student': student,
+        'posts': posts
+    })
 
 
-#ADMIN DASHBOARD  
 def admin_dashboard(request):
 
     if 'student_id' not in request.session:
         return redirect('login')
 
-    student = Student.objects.get(
-        id=request.session['student_id']
-    )
+    student = Student.objects.get(id=request.session['student_id'])
 
-    # SECURITY CHECK
     if student.role != "ADMIN":
         messages.error(request, "Access Denied")
         return redirect('dashboard')
 
-    return render(request, 'admin_dashboard.html')
+    posts = Post.objects.all().order_by('-created_at')
+
+    total_students = Student.objects.filter(role="USER").count()
+    total_staff = Student.objects.filter(role="STAFF").count()
+    total_posts = Post.objects.count()
+
+    return render(request, 'admin_dashboard.html', {
+        'student': student,
+        'posts': posts,
+        'total_students': total_students,
+        'total_staff': total_staff,
+        'total_posts': total_posts
+    })
 
 
 # POST A NEED FORM INTERFACE (SAVES NEW REQUEST)
@@ -163,12 +173,14 @@ def login_page(request):
 
             request.session['role'] = student.role
 
-            messages.success(request,"Welcome Ready to connect and help others?")
+            
 
             # ROLE BASED REDIRECT
 
             if student.role == "USER":
+                messages.success(request,"Welcome Ready to connect and help others?")
                 return redirect('dashboard')
+
 
             elif student.role == "STAFF":
                 return redirect('staff_dashboard')
@@ -218,3 +230,93 @@ def signup_page(request):
 #development team page
 def development_team(request):
     return render(request, 'development_team.html')
+
+
+def manage_students(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    admin = Student.objects.get(id=request.session['student_id'])
+
+    if admin.role != "ADMIN":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    students = Student.objects.filter(role="USER")
+
+    return render(request, 'manage_students.html', {
+        'students': students
+    })
+
+def staff_list(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    admin = Student.objects.get(id=request.session['student_id'])
+
+    if admin.role != "ADMIN":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    staffs = Student.objects.filter(role="STAFF")
+
+    return render(request, 'staff_list.html', {
+        'staffs': staffs
+    })
+
+def manage_posts(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    admin = Student.objects.get(id=request.session['student_id'])
+
+    if admin.role != "ADMIN":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    posts = Post.objects.all().order_by('-created_at')
+
+    return render(request, 'manage_posts.html', {
+        'posts': posts
+    })
+
+def delete_post(request, post_id):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    admin = Student.objects.get(id=request.session['student_id'])
+
+    if admin.role != "ADMIN":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    post = get_object_or_404(Post, id=post_id)
+    post.delete()
+
+    return redirect('admin_dashboard')
+
+def delete_student(request, student_id):
+
+    # login check
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    admin = Student.objects.get(id=request.session['student_id'])
+
+    # only admin allowed
+    if admin.role != "ADMIN":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    student = get_object_or_404(Student, id=student_id)
+
+    # safety: admin or staff delete nahi hoga (optional safeguard)
+    if student.role == "USER":
+        student.delete()
+        messages.success(request, "Student deleted successfully")
+    else:
+        messages.error(request, "You cannot delete this user")

@@ -23,4 +23,17 @@ urlpatterns = [
     
     # 3. Securely logout karne ke liye
     path('logout/', views.logout_view, name='logout'),
+
+    path('manage-students/', views.manage_students, name='manage_students'),
+
+    path('staff-list/', views.staff_list, name='staff_list'),
+
+    path('manage-posts/', views.manage_posts, name='manage_posts'),
+
+    path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
+    path(
+        'delete-student/<int:student_id>/',
+        views.delete_student,
+        name='delete_student'
+    ),
 ]

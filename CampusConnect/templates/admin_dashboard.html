@@ -1,17 +1,201 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
 
-<div class="container mt-5">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-    <h1>
-        Admin Dashboard
-    </h1>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7ff, #eef2ff);
+        }
 
-    <p>
-        Welcome Admin 👑
-    </p>
+        /* HEADER */
+        .dashboard-header {
+            background: #ffffff;
+            padding: 18px 22px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+
+        /* CARDS */
+        .stat-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+            transition: 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
+
+        /* BUTTONS */
+        .action-btn {
+            border-radius: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* POST CARD */
+        .post-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+            transition: 0.3s ease;
+            background: #fff;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .badge {
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container my-5">
+
+    <!-- HEADER -->
+    <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold m-0">
+            <i class="bi bi-shield-lock text-primary me-2"></i>
+            Admin Dashboard
+        </h3>
+
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm shadow-sm">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
+
+    <!-- QUICK CARDS -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card stat-card p-3 text-center">
+                <h6>Total Students</h6>
+                <h3 class="text-primary">{{ total_students }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card stat-card p-3 text-center">
+                <h6>Staff Members</h6>
+                <h3 class="text-success">{{ total_staff }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card stat-card p-3 text-center">
+                <h6>Total Posts</h6>
+                <h3 class="text-danger">{{ total_posts }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="row mb-4 text-center">
+
+        <div class="col-md-4">
+            <a href="{% url 'manage_students' %}" class="btn btn-primary action-btn w-100 py-3 shadow-sm">
+                <i class="bi bi-people-fill me-2"></i> Manage Students
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="{% url 'staff_list' %}" class="btn btn-success action-btn w-100 py-3 shadow-sm">
+                <i class="bi bi-person-badge me-2"></i> Staff List
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="{% url 'manage_posts' %}" class="btn btn-dark action-btn w-100 py-3 shadow-sm">
+                <i class="bi bi-journal-text me-2"></i> Manage Posts
+            </a>
+        </div>
+
+    </div>
+
+    <!-- POSTS SECTION -->
+    <div class="mb-3" id="posts">
+        <h4 class="section-title">All Posts</h4>
+    </div>
+
+    <div class="row">
+
+        {% for post in posts %}
+        {% for post in posts %}
+<div class="col-md-6 mb-3">
+
+    <div class="card post-card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <!-- TITLE -->
+            <h5 class="fw-bold mb-2 text-dark">
+                {{ post.title }}
+            </h5>
+
+            <!-- CATEGORY BADGE -->
+            <span class="badge bg-gradient bg-info text-dark mb-3 px-3 py-2">
+                {{ post.category }}
+            </span>
+
+            <!-- DESCRIPTION -->
+            <p class="text-muted small mb-3" style="line-height: 1.6;">
+                {{ post.description|truncatechars:120 }}
+            </p>
+
+            <!-- USER INFO -->
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-person-circle text-primary me-2 fs-5"></i>
+                <span class="fw-semibold text-dark">
+                    {{ post.student.username }}
+                </span>
+            </div>
+
+            <!-- DATE -->
+            <div class="text-muted small d-flex align-items-center">
+                <i class="bi bi-calendar3 me-2"></i>
+                {{ post.created_at|date:"d M Y" }}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% empty %}
+<p class="text-muted text-center">No posts available</p>
+{% endfor %}
+
+        {% empty %}
+        <p class="text-muted">No posts available</p>
+        {% endfor %}
+
+    </div>
 
 </div>
 
-{% endblock %}
+</body>
+</html>
