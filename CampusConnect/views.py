@@ -327,3 +327,8 @@ def delete_student(request, student_id):
         messages.success(request, "Student deleted successfully")
     else:
         messages.error(request, "You cannot delete this user")
+
+
+#about_olatform
+def about_platform(request):
+    return render(request, 'about.html')

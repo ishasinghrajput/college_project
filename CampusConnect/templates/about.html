@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+
+    body{
+        background:#f5f7ff;
+    }
+
+    /* HERO */
+    .about-hero{
+        background:linear-gradient(135deg,#6c63ff,#5f8dff);
+        color:white;
+        padding:90px 40px;
+        border-radius:30px;
+        text-align:center;
+    }
+
+    .about-title{
+        font-size:52px;
+        font-weight:800;
+    }
+
+    .about-text{
+        max-width:750px;
+        margin:auto;
+        margin-top:20px;
+        font-size:18px;
+        line-height:1.8;
+        opacity:0.95;
+    }
+
+    /* SECTION */
+    .section-title{
+        font-size:38px;
+        font-weight:800;
+        color:#222;
+    }
+
+    .section-sub{
+        color:#666;
+    }
+
+    /* FEATURE CARD */
+    .feature-card{
+        background:white;
+        border:none;
+        border-radius:24px;
+        padding:35px;
+        text-align:center;
+        transition:0.3s;
+        height:100%;
+        box-shadow:0 8px 22px rgba(0,0,0,0.06);
+    }
+
+    .feature-card:hover{
+        transform:translateY(-6px);
+    }
+
+    .feature-icon{
+        width:80px;
+        height:80px;
+        border-radius:20px;
+        background:linear-gradient(135deg,#6c63ff,#5f8dff);
+        color:white;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        margin:auto;
+        margin-bottom:20px;
+        font-size:34px;
+    }
+
+    .feature-title{
+        font-size:22px;
+        font-weight:700;
+        margin-bottom:12px;
+    }
+
+    .feature-text{
+        color:#666;
+        line-height:1.7;
+    }
+
+    /* STEPS */
+    .step-box{
+        background:white;
+        border-radius:22px;
+        padding:30px;
+        box-shadow:0 6px 18px rgba(0,0,0,0.05);
+        height:100%;
+    }
+
+    .step-number{
+        width:55px;
+        height:55px;
+        border-radius:50%;
+        background:#6c63ff;
+        color:white;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-weight:700;
+        font-size:22px;
+        margin-bottom:18px;
+    }
+
+    .step-title{
+        font-weight:700;
+        font-size:22px;
+        margin-bottom:10px;
+    }
+
+    .step-text{
+        color:#666;
+        line-height:1.7;
+    }
+
+    /* PURPOSE */
+    .purpose-box{
+        background:white;
+        border-radius:30px;
+        padding:50px;
+        box-shadow:0 8px 22px rgba(0,0,0,0.06);
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- HERO -->
+    <div class="about-hero">
+
+        <h1 class="about-title">
+            About Campus Help Hub
+        </h1>
+
+        <p class="about-text">
+            Campus Help Hub is a smart student collaboration platform
+            where students can post academic needs, help others,
+            and build a connected learning community inside campus.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- FEATURES -->
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+
+        <h2 class="section-title">
+            Platform Features
+        </h2>
+
+        <p class="section-sub">
+            Everything students need in one collaborative platform
+        </p>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- FEATURE 1 -->
+        <div class="col-md-4">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+
+                <h4 class="feature-title">
+                    Post Requests
+                </h4>
+
+                <p class="feature-text">
+                    Students can post coding doubts, assignment help,
+                    notes requests and classroom queries easily.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- FEATURE 2 -->
+        <div class="col-md-4">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+                <h4 class="feature-title">
+                    Help Others
+                </h4>
+
+                <p class="feature-text">
+                    Students can explore others' requests and help
+                    classmates through collaboration.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- FEATURE 3 -->
+        <div class="col-md-4">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+
+                <h4 class="feature-title">
+                    Reward System
+                </h4>
+
+                <p class="feature-text">
+                    Users can earn reward points by helping other
+                    students and contributing positively.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- HOW IT WORKS -->
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+
+        <h2 class="section-title">
+            How It Works
+        </h2>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- STEP 1 -->
+        <div class="col-md-4">
+
+            <div class="step-box">
+
+                <div class="step-number">
+                    1
+                </div>
+
+                <h4 class="step-title">
+                    Create Account
+                </h4>
+
+                <p class="step-text">
+                    Signup and login into the platform as a student,
+                    staff member or admin.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="col-md-4">
+
+            <div class="step-box">
+
+                <div class="step-number">
+                    2
+                </div>
+
+                <h4 class="step-title">
+                    Post Your Need
+                </h4>
+
+                <p class="step-text">
+                    Add your academic problem, coding doubt,
+                    notes requirement or classroom query.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="col-md-4">
+
+            <div class="step-box">
+
+                <div class="step-number">
+                    3
+                </div>
+
+                <h4 class="step-title">
+                    Get Help
+                </h4>
+
+                <p class="step-text">
+                    Other students can respond and help solve your
+                    issues through collaboration.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PURPOSE -->
+<div class="container py-5">
+
+    <div class="purpose-box text-center">
+
+        <h2 class="section-title mb-4">
+            Why We Built This Platform
+        </h2>
+
+        <p class="section-sub fs-5" style="line-height:1.9;">
+
+            Many students struggle to find quick academic help inside college.
+            Campus Help Hub was built to create a collaborative ecosystem
+            where students can connect, share knowledge and solve problems
+            together in a simple and modern way.
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
