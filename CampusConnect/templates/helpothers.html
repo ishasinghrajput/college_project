@@ -1,5 +1,149 @@
 {% extends 'base.html' %}
+{% block extra_css %}
+<style>
+
+body{
+    background: #f5f7ff;
+}
+
+/* PAGE TITLE */
+.page-title{
+    font-size: 28px;
+    font-weight: 800;
+    color: #4f46e5;
+    margin-top: 20px;
+}
+
+/* CARD STYLE */
+.help-card{
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transition: 0.3s;
+    background: white;
+}
+
+.help-card:hover{
+    transform: translateY(-5px);
+}
+
+/* BADGE */
+.category-badge{
+    background: #ecebff;
+    color: #4f46e5;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* BUTTON */
+.help-btn{
+    background: linear-gradient(135deg,#6c63ff,#5f8dff);
+    border: none;
+    color: white;
+    border-radius: 12px;
+    padding: 10px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.help-btn:hover{
+    transform: scale(1.03);
+    color: white;
+}
+
+/* EMPTY STATE */
+.empty-box{
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+</style>
+{% endblock %}
+
 {% block content %}
-  <h1>help others and earn karma points</h1>
+
+<div class="container mt-4">
+
+    <!-- PAGE TITLE -->
+    <h2 class="page-title text-center">
+        🤝 Help Others & Earn Points
+    </h2>
+
+    <p class="text-center text-muted mb-4">
+        Connect with students who need help in real-time
+    </p>
+
+    <div class="row g-4">
+
+        {% for post in posts %}
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="card help-card p-3">
+
+                <!-- CATEGORY -->
+                <span class="category-badge mb-2">
+                    {{ post.category }}
+                </span>
+
+                <!-- TITLE -->
+                <h5 class="fw-bold mt-2">
+                    {{ post.title }}
+                </h5>
+
+                <!-- DESCRIPTION -->
+                <p class="text-muted small">
+                    {{ post.description|truncatechars:120 }}
+                </p>
+
+                <!-- INFO -->
+                <div class="d-flex justify-content-between text-muted small mb-3">
+
+                    <span>
+                        👤 {{ post.student.username }}
+                    </span>
+
+                    <span>
+                        📅 {{ post.created_at|date:"d M Y" }}
+                    </span>
+
+                </div>
+
+                <!-- HELP BUTTON -->
+              <button type="button" class="btn help-btn w-100" disabled>
+                🚀 Help Now
+              </button>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <!-- EMPTY STATE -->
+        <div class="col-12">
+
+            <div class="empty-box">
+
+                <h4>No Help Requests Right Now 😌</h4>
+                <p class="text-muted">
+                    Students will soon post requests. Stay active!
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
 {% endblock %}
 

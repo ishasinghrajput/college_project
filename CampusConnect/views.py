@@ -18,17 +18,28 @@ def myposts(request):
     context = {
         'student': current_student,
     }
-    
     return render(request, 'myposts.html', context)
 
 
 def profile(request):
     return render(request, "profile.html")  # Changed to load standard .html template
 
-
+#HELPOTHERS
 def helpothers(request):
-    return render(request, 'helpothers.html')
 
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    logged_in_id = request.session['student_id']
+
+    current_student = Student.objects.get(id=logged_in_id)
+
+    # FIXED QUERY
+    posts = Post.objects.all().exclude(student=current_student).order_by('-created_at')
+
+    return render(request, 'helpothers.html', {
+        'posts': posts
+    })
 
 # LOGGED IN USER DASHBOARD (FETCHES ALL CAMPUS POSTS)
 def dashboard(request):
@@ -60,7 +71,7 @@ def staff_dashboard(request):
         messages.error(request, "Access Denied")
         return redirect('dashboard')
 
-    # 🔥 THIS IS MISSING (MAIN FIX)
+    #THIS IS MISSING (MAIN FIX)
     posts = Post.objects.all().order_by('-created_at')
 
     return render(request, 'staff_dashboard.html', {
@@ -226,10 +237,6 @@ def signup_page(request):
 
     return render(request, 'signup.html')
 
-
-#development team page
-def development_team(request):
-    return render(request, 'development_team.html')
 
 
 def manage_students(request):

@@ -9,10 +9,9 @@ urlpatterns = [
     path('staff-dashboard/',views.staff_dashboard,name='staff_dashboard'),
     path('admin-dashboard/',views.admin_dashboard,name='admin_dashboard'),
     path('profile/', views.profile, name='profile'),
-    path('hellpothers/', views.helpothers, name='helpothers'),
+    path('hellpothers/', views.helpothers, name='helpothers'),   
     path('login/', views.login_page, name='login'),
     path('signup/', views.signup_page, name='signup'),
-    path('development-team/',views.development_team, name= 'development_team'),
     # === Jaroori Paths Jo Add Kiye Hain ===
     
     # 1. Naya Post (Need Form) open karne aur save karne ke liye

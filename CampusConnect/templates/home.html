@@ -2,6 +2,7 @@
 {% load static %}
 {% block extra_css %}
 <style>
+/*home page css*/
 {% comment %} hero section custom css {% endcomment %}
     body{
         background:#f7f8ff;
@@ -76,102 +77,139 @@
         color:white;
     }
 
-
-
-    .user-images img{
-        width:50px;
-        height:50px;
-        border-radius:50%;
-        border:3px solid white;
-        margin-left:-12px;
-    }
-
-    .user-images img:first-child{
-        margin-left:0;
-    }
-
-
-
     .hero-image{
-        width:500px;
+        width:100%;
+        max-width:500px;
     }
 
-{% comment %} card custom css {% endcomment %}
-    .icon-box{
-        width:80px;
-        height:80px;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        ont-size:34px;
-    }
+/* Used in:
+   - templates/home.html
+*/
 
-    .card{
-        transition:0.3s;
-        background: radial-gradient(circle,rgba(166, 181, 237, 1) 0%, rgba(233, 235, 242, 1) 100%);
-    }
+.hero-avatar{
+    width: 45px;
+    height: 45px;
+    object-fit: cover; 
+}
 
-    .card:hover{
-        transform:translateY(-10px);
-    }
-
+    
 
 
 
 {% comment %} FOOTER  CSS {% endcomment %}
+/* FOOTER */
 
-
-.footer{
-    background:#111827;
-    color:white;
-    padding:60px 20px 20px;
+.site-footer{
+    background: #9ab1fc;
+    background: radial-gradient(circle, rgba(154, 177, 252, 1) 0%, rgba(178, 196, 253, 1) 24%, rgba(255, 255, 255, 1) 100%);
+    color: #666;
+    border-top: 1px solid #dfe3ff;
 }
 
-.footer h3{
-    margin-bottom:20px;
-    font-size:22px;
+/* TITLE */
+
+.footer-title{
+    color: #222;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 10px;
 }
 
-.footer p{
-    color:#d1d5db;
-    line-height:1.7;
+.footer-title::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    width: 45px;
+    height: 3px;
+
+    border-radius: 10px;
+
+    background: #6c63ff;
 }
 
-.footer ul{
-    list-style:none;
-    padding:0;
+/* TEXT */
+
+.brand-text{
+    line-height: 1.8;
+    font-size: 0.95rem;
+    color: #666;
 }
 
-.footer ul li{
-    margin-bottom:12px;
+/* CARD */
+
+.contributor-card{
+    background: white;
+    border-radius: 20px;
+    padding: 24px 18px;
+    text-align: center;
+    height: 100%;
+    transition: 0.3s;
+    box-shadow: 0 5px 20px rgba(108,99,255,0.08);
 }
 
-.footer ul li a{
-    text-decoration:none;
-    color:#d1d5db;
+.contributor-card:hover{
+    transform: translateY(-6px);
 }
 
-.footer ul li a:hover{
-    color:white;
+/* IMAGE */
+
+.contributor-avatar{
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 4px solid #6c63ff;
 }
 
-.social-icons{
-    margin-top:20px;
+/* NAME */
+
+.contributor-name{
+    color: #222;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
-.social-icons i{
-    font-size:20px;
-    margin-right:15px;
-    cursor:pointer;
+/* ROLE */
+
+.contributor-role{
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+/* ICONS */
+
+.social-links{
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 15px;
+}
+
+.social-links a{
+    color: #7f79eb;
+    font-size: 18px;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.social-links a:hover{
+    color: #4f46e5;
 }
 
 .footer-bottom{
+    background: #9ab1fc;
     text-align:center;
-    border-top:1px solid #374151;
+    border-top:1px solid #010815;
     margin-top:40px;
     padding-top:20px;
-    color:#9ca3af;
+    color:black;
 }
 </style>
 {% endblock  %}
@@ -179,7 +217,6 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<link rel="stylesheet" href="lo">
 <section class="py-3">
 
     <div class="container">
@@ -189,11 +226,9 @@
             <div class="row align-items-center">
 
                 <!-- LEFT SIDE -->
-
                 <div class="col-lg-6">
 
                     <!-- BADGE -->
-
                     <div class="custom-badge mb-4">
 
                         Welcome to Campus Help Hub 👋
@@ -201,7 +236,6 @@
                     </div>
 
                     <!-- TITLE -->
-
                     <h1 class="hero-title mb-4">
 
                         Your Smart <br>
@@ -225,14 +259,14 @@
 
                     <div class="mt-4">
 
-                        <a href="#"
+                        <a href="{% url 'login' %}"
                            class="btn get-btn">
 
                             🚀 Get Started
 
                         </a>
 
-                        <a href="#"
+                        <a href="{% url 'helpothers' %}"
                            class="btn explore-btn ms-3">
 
                             <i class="bi bi-search"></i>
@@ -245,46 +279,22 @@
                     
 
                     <!-- USERS -->
+                <div class="mt-5 d-flex align-items-center gap-3">
+                    <div class="d-flex">
+                        <img src="{% static 'image/man2.png' %}"class="hero-avatar rounded-circle border border-light">
 
-                    <div class="d-flex align-items-center mt-5">
-
-                        <div class="user-images d-flex">
-
-                            <img src="https://i.pravatar.cc/45?img=1">
-
-                            <img src="https://i.pravatar.cc/45?img=2">
-
-                            <img src="https://i.pravatar.cc/45?img=3">
-
-                            <img src="https://i.pravatar.cc/45?img=4">
-
-                        </div>
-
-                        <div class="ms-4">
-
-                            <h5 class="mb-0">
-
-                                Join 2,000+ students
-
-                            </h5>
-
-                            <p class="text-muted mb-0">
-
-                                helping and growing together
-
-                            </p>
-
-                        </div>
-
+                       <img src="{% static 'image/women.png' %}"class="hero-avatar rounded-circle border border-light ms-n2">
+                        <div class="hero-avatar rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center ms-n2">+2k</div>
                     </div>
-
+                    <span class="text-secondary">Trusted by happy users</span>
                 </div>
+            </div>
 
                 <!-- RIGHT SIDE -->
 
                 <div class="col-lg-6 text-center">
 
-                    <img src="{% static 'image/IMG.jpeg' %}"
+                    <img src="{% static 'image/img.jpeg' %}"
                          class="hero-image">
 
                 </div>
@@ -297,247 +307,171 @@
 
 </section>
 
-<!-- BOOTSTRAP 4 FEATURE CARDS -->
-
-<div class="container py-5">
-
-    <!-- HEADING -->
-    <div class="text-center mb-5">
-
-        <h2 class="fw-bold display-5">
-            Everything You Need in One Place
-        </h2>
-
-        <div class="mx-auto bg-success rounded-pill"
-             style="width:70px;height:5px;">
-        </div>
-
-    </div>
-
-    <!-- CARDS ROW -->
-    <div class="row g-4">
-
-        <!-- CARD 1 -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-lg h-100 rounded-4 p-3">
-
-                <div class="card-body">
-
-                    <!-- ICON -->
-                    <div class="icon-box bg-primary-subtle text-primary mb-4">
-                        <i class="bi bi-journal-bookmark-fill"></i>
-                    </div>
-
-                    <!-- TITLE -->
-                    <h4 class="card-title fw-bold mb-3">
-                        Post Your Needs
-                    </h4>
-
-                    <!-- TEXT -->
-                    <p class="card-text text-secondary">
-                        Post your academic needs like notes,
-                        assignments, projects or any doubts.
-                    </p>
-
-                    <!-- BUTTON -->
-                    <a href="#" class="btn btn-primary rounded-pill px-4">
-                        Post Now ->
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- CARD 2 -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-lg h-100 rounded-4 p-3">
-
-                <div class="card-body">
-
-                    <div class="icon-box bg-success-subtle text-success mb-4">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </div>
-
-                    <h4 class="card-title fw-bold mb-3">
-                        Connect Instantly 
-                    </h4>
-
-                    <p class="card-text text-secondary">
-                        Connect with students who can
-                        help you in real-time.
-                    </p>
-
-                    <a href="#" class="btn btn-success rounded-pill px-4">
-                        Connect ->
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- CARD 3 -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-lg h-100 rounded-4 p-3">
-
-                <div class="card-body">
-
-                    <div class="icon-box bg-warning-subtle text-warning mb-4">
-                        <i class="bi bi-trophy-fill"></i>
-                    </div>
-
-                    <h4 class="card-title fw-bold mb-3">
-                        Earn Rewards
-                    </h4>
-
-                    <p class="card-text text-secondary">
-                        Earn reward points by helping
-                        others and leveling up.
-                    </p>
-
-                    <a href="#" class="btn btn-warning rounded-pill px-4">
-                        Earn Now ->
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- CARD 4 -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-lg h-100 rounded-4 p-3">
-
-                <div class="card-body">
-
-                    <div class="icon-box bg-danger-subtle text-danger mb-4">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-
-                    <h4 class="card-title fw-bold mb-3">
-                        Safe & Secure
-                    </h4>
-
-                    <p class="card-text text-secondary">
-                        Private chat system to ensure
-                        a safe and trusted environment.
-                    </p>
-
-                    <a href="#" class="btn btn-danger rounded-pill px-4">
-                        Learn More ->
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
 
 <!--FOOTER-->
-
-<footer class="footer">
+<footer class="site-footer mt-auto pt-5 pb-4">
 
     <div class="container">
 
-        <div class="row">
+        <div class="row justify-content-between align-items-start">
 
-            <!-- ABOUT -->
-            <div class="col-lg-3 col-md-6 mb-4">
+            <!-- LEFT SIDE -->
+            <div class="col-lg-3 mb-4">
 
-                <h3>
-                    <i class="bi bi-mortarboard-fill"></i>
+                <h5 class="footer-title">
                     Campus Help Hub
-                </h3>
+                </h5>
 
-                <p>
-                    A smart platform for students to
-                    post needs, help others and
-                    connect instantly.
+                <p class="brand-text">
+                    A smart student support platform where students can
+                    connect, share problems and get instant help from contributors.
                 </p>
 
-                <div class="social-icons">
+            </div>
 
-                    <i class="bi bi-facebook"></i>
-                    <i class="bi bi-instagram"></i>
-                    <i class="bi bi-twitter-x"></i>
-                    <i class="bi bi-linkedin"></i>
+            <!-- RIGHT SIDE -->
+            <div class="col-lg-9">
+
+                <h5 class="footer-title">
+                    Our Contributors
+                </h5>
+
+                <div class="row g-4">
+                    
+                    <!-- CARD 1 -->
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="contributor-card">
+
+                            <img
+                                src="{% static 'image/isha-img.jpeg' %}"
+                                class="contributor-avatar"
+                                alt="Isha Singh"
+                            >
+
+                            <h6 class="contributor-name">
+                                Isha Singh
+                            </h6>
+
+                            <p class="contributor-role">
+                                Roll No. 235141
+                            </p>
+
+                            <p class="contributor-role">
+                                Worked on frontend design and UI/UX improvements.
+                            </p>
+
+                            <div class="social-links">
+
+                                <a href="https://github.com/ishasinghrajput" target="_blank">
+                                    <i class="fa-brands fa-github"></i>
+                                </a>
+
+                                <a href="https://www.linkedin.com/in/isha-singh-3a131a340" target="_blank">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </a>
+
+                                <a href="mailto:ishasingh92341@gmail.com">
+                                    <i class="fa fa-envelope"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!-- CARD 2 -->
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="contributor-card">
+
+                            <img
+                                src="{% static 'images/img.jpeg' %}"
+                                class="contributor-avatar"
+                                alt="Dipali Sah"
+                            >
+
+                            <h6 class="contributor-name">
+                                Dipali Sah
+                            </h6>
+
+                            <p class="contributor-role">
+                                Roll No. 235166
+                            </p>
+
+                            <p class="contributor-role">
+                                Worked on Django backend,
+                                authentication and APIs.
+                            </p>
+
+                            <div class="social-links">
+
+                                <a href="#" target="_blank">
+                                    <i class="fa-brands fa-github"></i>
+                                </a>
+
+                                <a href="#" target="_blank">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </a>
+
+                                <a href="mailto:@gmail.com">
+                                    <i class="fa fa-envelope"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CARD 3 -->
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="contributor-card">
+
+                            <img
+                                src="{% static 'image/samiksha.jpeg' %}"
+                                class="contributor-avatar"
+                                alt="Samiksha Kumari"
+                            >
+
+                            <h6 class="contributor-name">
+                                Samiksha Kumari
+                            </h6>
+
+                            <p class="contributor-role">
+                                Roll No. 235122
+                            </p>
+
+                            <p class="contributor-role">
+                                Worked on database management and project testing.
+                            </p>
+
+                            <div class="social-links">
+
+                                <a href="https://github.com/samikshashuklaa" target="_blank">
+                                    <i class="fa-brands fa-github"></i>
+                                </a>
+
+                                <a href="https://www.linkedin.com/in/samiksha-shukla-5b54b32a6" target="_blank">
+                                    <i class="fa-brands fa-linkedin"></i>
+                                </a>
+
+                                <a href="mailto:@example.com">
+                                    <i class="fa fa-envelope"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
-            <!-- LINKS -->
-            <div class="col-lg-3 col-md-6 mb-4">
-
-                <h3>Quick Links</h3>
-
-                <ul>
-
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Chatroom</a></li>
-                    <li><a href="#">Help Others</a></li>
-
-                </ul>
-
-            </div>
-
-            <!-- SUPPORT -->
-            <div class="col-lg-3 col-md-6 mb-4">
-
-                <h3>Support</h3>
-
-                <ul>
-
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-
-                </ul>
-
-            </div>
-
-            <!-- CONTACT -->
-            <div class="col-lg-3 col-md-6 mb-4">
-
-                <h3>Contact</h3>
-
-                <ul>
-
-                    <li>
-                        <i class="bi bi-envelope-fill"></i>
-                        support@gmail.com
-                    </li>
-
-                    <li>
-                        <i class="bi bi-telephone-fill"></i>
-                        +91 9876543210
-                    </li>
-
-                    <li>
-                        <i class="bi bi-geo-alt-fill"></i>
-                        India
-                    </li>
-
-                </ul>
-
-            </div>
-
         </div>
-
         <!-- BOTTOM -->
         <div class="footer-bottom">
 
