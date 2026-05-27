@@ -115,9 +115,15 @@ body{
                 </div>
 
                 <!-- HELP BUTTON -->
-              <button type="button" class="btn help-btn w-100" disabled>
+              {% comment %} <button type="button" class="btn help-btn w-100">
                 🚀 Help Now
-              </button>
+              </button> {% endcomment %}
+              <form method="POST" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn help-btn w-100">
+                                Help Now
+                            </button>
+                        </form>
 
             </div>
 

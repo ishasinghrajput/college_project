@@ -148,7 +148,7 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'myposts' %}">My Posts</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'post_need' %}">Post Need</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Chatroom</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'my_chats' %}">My Chats</a></li>
             </ul>
 
             <!-- RIGHT SIDE: COIN & PROFILE DROPDOWN -->
@@ -170,7 +170,7 @@
                         style="border-radius: 14px; padding: 10px;">
                         <li class="px-3 py-2 border-bottom">
                             <small class="text-muted d-block">Welcome back,</small>
-                            <strong class="text-dark">Student Workspace</strong>
+                            <strong class="text-dark">{{ student.username }}</strong>
                         </li>
                         <li><a class="dropdown-item py-2" href="#"><i
                                     class="bi bi-person me-2 text-muted"></i> Profile</a></li>

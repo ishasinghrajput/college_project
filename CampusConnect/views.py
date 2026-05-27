@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Student, Post  # Post table import kar li hai
+from .models import *  # Post table import kar li hai
 
 
 # HOME PAGE
@@ -10,19 +10,27 @@ def home(request):
 
 # MY POSTS PAGE
 def myposts(request):
+
     if 'student_id' not in request.session:
         return redirect('login')
-        
-    logged_in_id = request.session['student_id']
-    current_student = Student.objects.get(id=logged_in_id)
-    context = {
+
+    current_student = Student.objects.get(
+        id=request.session['student_id']
+    )
+
+    posts = Post.objects.filter(
+        student=current_student
+    ).order_by('-created_at')
+
+    help_requests = HelpRequest.objects.filter(
+        post__student=current_student
+    ).order_by('-created_at')   # ✅ FIXED HERE
+
+    return render(request, 'myposts.html', {
         'student': current_student,
-    }
-    return render(request, 'myposts.html', context)
-
-
-def profile(request):
-    return render(request, "profile.html")  # Changed to load standard .html template
+        'posts': posts,
+        'help_requests': help_requests
+    })
 
 #HELPOTHERS
 def helpothers(request):
@@ -50,7 +58,7 @@ def dashboard(request):
     current_student = Student.objects.get(id=logged_in_id)
     
     # Database se saare posts fetch karke dashboard par bhejne ke liye (Newest First)
-    all_posts = Post.objects.all().order_by('-created_at')
+    all_posts = Post.objects.filter(status="OPEN").order_by('-created_at')
     
     context = {
         'student': current_student,
@@ -140,19 +148,31 @@ def post_need(request):
 
 # HELP NOW CLICK ACTIVITY ACTION HANDLER
 def send_help_request(request, post_id):
+
     if 'student_id' not in request.session:
         return redirect('login')
-        
-    helper_id = request.session['student_id']
-    post_obj = get_object_or_404(Post, id=post_id)
-    
-    # Check: Student khud ke hi post par help click na kare
-    if post_obj.student.id == helper_id:
-        messages.error(request, "You cannot send a help request to your own post!")
+
+    helper = Student.objects.get(id=request.session['student_id'])
+    post = get_object_or_404(Post, id=post_id)
+
+    # apna post nahi help kar sakta
+    if post.student == helper:
+        messages.error(request, "You cannot help your own post!")
         return redirect('dashboard')
-        
-    # Notification push execution message
-    messages.success(request, f"Help request notification sent to {post_obj.student.username} successfully!")
+
+    # duplicate request check
+    already = HelpRequest.objects.filter(
+        post=post,
+        helper=helper
+    ).exists()
+
+    if not already:
+        HelpRequest.objects.create(
+            post=post,
+            helper=helper
+        )
+        messages.success(request, "Help request sent!")
+
     return redirect('dashboard')
 
 
@@ -332,3 +352,111 @@ def delete_student(request, student_id):
 #about_olatform
 def about_platform(request):
     return render(request, 'about.html')
+
+
+#chat
+def accept_chat_request(request, request_id):
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    current_student = Student.objects.get(id=request.session['student_id'])
+
+    help_request = get_object_or_404(HelpRequest, id=request_id)
+
+    # only post owner can accept
+    if help_request.post.student != current_student:
+        return redirect('dashboard')
+
+    help_request.is_accepted = True
+    help_request.save()
+
+    #CHAT CREATE ONLY AFTER ACCEPT
+    room = ChatRoom.objects.create(
+        post=help_request.post,
+        requester=help_request.post.student,
+        helper=help_request.helper
+    )
+
+    return redirect('chatroom', room.id)
+
+
+def mark_resolved(request, post_id):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    owner = Student.objects.get(id=request.session['student_id'])
+    post = get_object_or_404(Post, id=post_id)
+
+    # only owner can resolve
+    if post.student != owner:
+        return redirect('dashboard')
+
+    if post.status == "RESOLVED":
+        return redirect('myposts')
+
+    post.status = "RESOLVED"
+    post.save()
+
+    # find helper from chat
+    chat = ChatRoom.objects.filter(post=post).first()
+
+    if chat:
+        helper = chat.helper
+
+        points = 10
+
+        helper.points += points
+        helper.save()
+
+    return redirect('myposts')
+
+
+
+
+
+def chatroom(request, room_id):
+
+    current_student = Student.objects.get(id=request.session['student_id'])
+
+    room = get_object_or_404(ChatRoom, id=room_id)
+
+    if request.method == "POST":
+
+        msg = request.POST.get('message')
+
+        print("DEBUG MSG:", msg)   # 🔥 IMPORTANT
+
+        if msg is not None and msg.strip() != "":
+
+           Message.objects.create(
+            room=room,
+            sender=current_student,
+            text=msg   # 👈 IMPORTANT FIX
+            )
+
+        return redirect('chatroom', room.id)
+
+    messages = Message.objects.filter(room=room).order_by('timestamp')
+
+    return render(request, "chatroom.html", {
+        "room": room,
+        "messages": messages,
+        "student": current_student
+    })
+
+def my_chats(request):
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    current_student = Student.objects.get(id=request.session['student_id'])
+
+    chat_rooms = ChatRoom.objects.filter(
+        models.Q(requester=current_student) |
+        models.Q(helper=current_student)
+    ).order_by('-created_at')
+
+    return render(request, 'my_chats.html', {
+        'chat_rooms': chat_rooms,
+        'student': current_student
+    })

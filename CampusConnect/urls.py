@@ -9,19 +9,23 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('staff-dashboard/',views.staff_dashboard,name='staff_dashboard'),
     path('admin-dashboard/',views.admin_dashboard,name='admin_dashboard'),
-    path('profile/', views.profile, name='profile'),
     path('hellpothers/', views.helpothers, name='helpothers'),   
     path('login/', views.login_page, name='login'),
     path('signup/', views.signup_page, name='signup'),
-    # === Jaroori Paths Jo Add Kiye Hain ===
     
-    # 1. Naya Post (Need Form) open karne aur save karne ke liye
+    # 1. for opening and save new post (Need Form)
     path('post-need/', views.post_need, name='post_need'),
-    
-    # 2. Help Now button click hone par request bhejne ke liye (Post ID ke saath)
+    path('resolve/<int:post_id>/', views.mark_resolved, name='mark_resolved'),
+
+    # CHAT SYSTEM (IMPORTANT ADD)
+    path('accept/<int:request_id>/', views.accept_chat_request, name='accept_chat_request'),
+    path('chat/<int:room_id>/', views.chatroom, name='chatroom'),
+    path('my-chats/', views.my_chats, name='my_chats'),
+
+    #for sending request(with Post ID)
     path('send-help-request/<int:post_id>/', views.send_help_request, name='send_help_request'),
     
-    # 3. Securely logout karne ke liye
+    #Securely logout
     path('logout/', views.logout_view, name='logout'),
 
     path('manage-students/', views.manage_students, name='manage_students'),
