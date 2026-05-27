@@ -425,14 +425,14 @@ def chatroom(request, room_id):
 
         msg = request.POST.get('message')
 
-        print("DEBUG MSG:", msg)   # 🔥 IMPORTANT
+        print("DEBUG MSG:", msg)  
 
         if msg is not None and msg.strip() != "":
 
            Message.objects.create(
             room=room,
             sender=current_student,
-            text=msg   # 👈 IMPORTANT FIX
+            text=msg   
             )
 
         return redirect('chatroom', room.id)
