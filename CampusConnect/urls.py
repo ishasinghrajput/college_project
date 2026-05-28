@@ -21,6 +21,8 @@ urlpatterns = [
     path('accept/<int:request_id>/', views.accept_chat_request, name='accept_chat_request'),
     path('chat/<int:room_id>/', views.chatroom, name='chatroom'),
     path('my-chats/', views.my_chats, name='my_chats'),
+    path('reopen-post/<int:post_id>/', views.reopen_post, name='reopen_post'),
+
 
     #for sending request(with Post ID)
     path('send-help-request/<int:post_id>/', views.send_help_request, name='send_help_request'),

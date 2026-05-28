@@ -35,7 +35,6 @@ class Post(models.Model):
         ('Notes', 'Notes Requirement'),
         ('Coding', 'Coding Doubt'),
         ('Assignment', 'Assignment Help'),
-        ('Updates', 'Classroom Update'),
         ('Campus Queries', 'Campus Query / Enquiry'),
     ]
     status = models.CharField(
@@ -74,7 +73,7 @@ class ChatRoom(models.Model):
 class Message(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(Student, on_delete=models.CASCADE)
-    text = models.TextField()
+    message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -2,94 +2,151 @@
 
 {% block content %}
 
-<!-- SUCCESS/ERROR POPUP MESSAGE AFTER CLICKING HELP NOW -->
 {% if messages %}
-<div class="container mt-4">
-    {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: 12px;">
-        <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-2"></i>
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-</div>
-{% endif %} 
+<div class="container mt-3">
 
-<!-- DASHBOARD CARDS SECTION -->
+    {% for message in messages %}
+
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0" role="alert"
+        style="border-radius: 12px;">
+
+        {{ message }}
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert">
+        </button>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+{% endif %}
+
 <div class="container mt-5">
 
     <div class="row g-4">
 
-        <!-- DYNAMIC DATABASE LOOP -->
         {% for post in all_posts %}
+
         <div class="col-md-6 col-lg-4">
 
-            <div class="card h-100">
+            <div class="card h-100 shadow-sm border-0 rounded-4 position-relative">
 
-                <div class="card-body">
+                <div class="card-body d-flex flex-column">
 
+                    <!-- TOP SECTION WITH CATEGORY & LIVE STATUS -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
 
-                        <span class="badge {% if post.category == 'Coding' %}bg-success{% elif post.category == 'Notes' %}bg-primary{% else %}bg-info text-dark{% endif %}">
+                        <span class="badge
+                            {% if post.category == 'Coding' %}bg-success
+                            {% elif post.category == 'Notes' %}bg-primary
+                            {% else %}bg-info text-dark
+                            {% endif %}">
                             {{ post.category }} Help
                         </span>
 
-                        <small class="text-muted">
-                            {{ post.created_at|date:"d M Y" }}
-                        </small>
+                        <!-- Status for all cards -->
+                        <div class="d-flex align-items-center">
+                            {% if post.status == "IN_PROGRESS" %}
+                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning rounded-pill px-2.5 py-1 fw-bold" style="font-size: 0.72rem; background-color: #fef9c3; color: #713f12;">
+                                    <span class="d-inline-block bg-warning rounded-circle me-1" style="width: 6px; height: 6px;"></span>In Progress
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger-emphasis border border-danger rounded-pill px-2.5 py-1 fw-bold" style="font-size: 0.72rem; background-color: #fee2e2; color: #991b1b;">
+                                    <span class="d-inline-block bg-danger rounded-circle me-1" style="width: 6px; height: 6px;"></span>Open
+                                </span>
+                            {% endif %}
+                        </div>
 
                     </div>
 
-                    <h4 class="fw-bold">
-                        {{ post.title }}
-                    </h4>
+                    <!-- TITLE -->
+                    <h4 class="fw-bold mb-2">{{ post.title }}</h4>
 
-                    <p class="text-muted">
+                    <!-- DESCRIPTION -->
+                    <p class="text-muted flex-grow-1 mb-3" style="font-size: 0.95rem; line-height: 1.5;">
                         {{ post.description }}
                     </p>
 
-                    <div class="d-flex justify-content-between mt-4">
+                    <hr class="text-muted opacity-25 my-2">
 
-                        <small>
-                            ⏰ {{ post.created_at|time:"h:i A" }}
-                        </small>
+                    <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
+                        
+                        <div>
+                            <span>⏰ {{ post.created_at|time:"h:i A" }}</span>
+                            <span class="mx-1.5 opacity-50">|</span>
+                            <span>{{ post.created_at|date:"d M Y" }}</span>
+                        </div>
 
-                        <small class="fw-semibold">
-                            Posted by {{ post.student.username }}
-                        </small>
+                        <!-- Right Side: Posted By Username  -->
+                        <div class="fw-semibold text-secondary">
+                            <i class="bi bi-person-circle me-1"></i>
+                            <span>By: {{ post.student.username }}</span>
+                        </div>
 
                     </div>
 
-                    <!-- LOGIC CONDITION: CHECK IF POST IS CREATED BY LOGGED IN USER -->
-                    {% if post.student.id == request.session.student_id %}
-                        <!-- if true: Hide button and show static badge text -->
-                        <div class="text-center mt-4 p-2 bg-light rounded-3 text-muted fw-bold border" style="font-size: 14px;">
-                            <i class="bi bi-person-check-fill text-secondary me-1"></i> Your Active Request
+                    <hr class="text-muted opacity-25 my-2">
+
+                    <!-- BUTTON LOGIC -->
+                    <div class="mt-2">
+
+                        {% if post.student.id == student.id %}
+                        <!-- OWN POST -->
+                        <div class="text-center p-2 bg-light border rounded-3 text-muted small fw-medium">
+                            <i class="bi bi-person-fill"></i> Your Active Request
                         </div>
-                    {% else %}
+
+                        {% else %}
+
+                        {% if post.taken_by_others %}
+                        <!-- TAKE BY OTHERS -->
+                        <div class="text-center p-2 bg-secondary-subtle border rounded-3 text-secondary small fw-bold">
+                            <i class="bi bi-lock-fill me-1"></i> Being Helped by {{ post.current_helper_name }}
+                        </div>
+
+                        {% elif post.has_requested %}
+
+                        {% if post.is_accepted %}
+                        <!-- Open Active Chat -->
+                        <a href="{% url 'chatroom' post.active_room_id %}"
+                            class="btn btn-warning w-100 fw-bold shadow-sm">
+                            <i class="bi bi-chat-dots-fill me-1"></i> Open Active Chat
+                        </a>
+                        {% else %}
+                        <!-- REQUEST SENT BUT PENDING -->
+                        <div class="text-center p-2 bg-light border rounded-3 text-secondary fw-bold small">
+                            <i class="bi bi-check-all me-1"></i> Request Sent (Pending)
+                        </div>
+                        {% endif %}
+
+
+                        {% else %}
+
+                        <!-- HELP NOW -->
                         <form method="POST" action="{% url 'send_help_request' post.id %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn help-btn w-100">
-                                Help Now
+                            <button class="btn btn-primary w-100 rounded-3">
+                                <i class="bi bi-hand-thumbs-up-fill me-1"></i> Help Now
                             </button>
                         </form>
-                    {% endif %}
+
+                        {% endif %}
+
+                        {% endif %}
+
+                    </div>
 
                 </div>
 
             </div>
 
         </div>
-        
+
         {% empty %}
-        
-        <!-- if post is empty -->
+
         <div class="col-12 text-center py-5">
-            <div class="p-5 bg-white rounded-4 shadow-sm border" style="max-width: 500px; margin: 0 auto;">
-                <i class="bi bi-clipboard-x text-muted mb-3" style="font-size: 3rem; display: block;"></i>
-                <h5 class="fw-bold text-dark">No Active Help Requests</h5>
-                <p class="text-muted small mb-0">Currently there are no help requests posted on campus. Be the first one to ask for help!</p>
-            </div>
+            <h5>No Posts Found</h5>
         </div>
 
         {% endfor %}

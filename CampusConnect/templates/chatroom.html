@@ -1,95 +1,277 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}Chat Room{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Chat</title>
 
-{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-<style>
-    .chat-box {
-        height: 65vh;
-        overflow-y: auto;
-        background: #f8fafc;
-        padding: 15px;
-        border-radius: 12px;
-    }
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
 
-    .msg {
-        padding: 8px 12px;
-        margin-bottom: 10px;
-        border-radius: 10px;
-        max-width: 60%;
-        font-size: 14px;
-    }
+        .chat-wrapper {
+            max-width: 850px;
+            margin: auto;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
 
-    .me {
-        background: #dcf8c6;
-        margin-left: auto;
-        text-align: right;
-    }
+        /* Premium Light Header */
+        .chat-header {
+            background: #ffffff;
+            color: #1e293b;
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 16px 16px 0 0;
+        }
 
-    .other {
-        background: #fff;
-        border: 1px solid #ddd;
-    }
+        /* Problem Info Box at Top */
+        .problem-badge {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 50px;
+            display: inline-block;
+        }
 
-    .chat-input {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
+        .chat-meta-box {
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            padding: 12px 16px;
+            border-left: 4px solid #6366f1;
+        }
 
-    .chat-input input {
-        flex: 1;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-    }
+        /* Clean Chat Body */
+        .chat-body {
+            background: #fdfdfd;
+            height: 500px;
+            overflow-y: auto;
+            padding: 24px;
+        }
 
-    .chat-input button {
-        padding: 10px 18px;
-        border: none;
-        background: #0d6efd;
-        color: white;
-        border-radius: 8px;
-    }
-</style>
+        /* Modern Light Purple Bubble for Own Messages */
+        .message-own {
+            background: #6366f1;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 16px 16px 4px 16px;
+            max-width: 70%;
+            margin-left: auto;
+            font-size: 0.95rem;
+        }
 
-<div class="container py-4">
+        /* Soft Gray Bubble for Other Messages */
+        .message-other {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 10px 16px;
+            border-radius: 16px 16px 16px 4px;
+            max-width: 70%;
+            font-size: 0.95rem;
+        }
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>{{ room.post.title }}</h4>
+        .message-time {
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
 
-        <a href="{% url 'my_chats' %}" class="btn btn-sm btn-light">
-            ← Back
-        </a>
-    </div>
+        /* Chat Footer Form styling */
+        .chat-footer {
+            background: white;
+            padding: 16px 24px;
+            border-top: 1px solid #e2e8f0;
+            border-radius: 0 0 16px 16px;
+        }
 
-    <!-- CHAT BOX -->
-    <div class="chat-box">
+        .chat-input {
+            border-radius: 24px;
+            padding: 10px 20px;
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+        }
 
-        {% for msg in messages %}
+        .chat-input:focus {
+            background-color: white;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
 
-            <div class="msg {% if msg.sender.id == student.id %}me{% else %}other{% endif %}">
-                <b>{{ msg.sender.username }}</b><br>
-                {{ msg.text }}
+        .btn-send {
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #6366f1;
+            border: none;
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        .btn-send:hover {
+            background-color: #4f46e5;
+        }
+
+        .message-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5">
+
+        <div class="chat-wrapper shadow-sm rounded-4 overflow-hidden">
+
+            <!-- HEADER -->
+            <div class="chat-header d-flex justify-content-between align-items-start">
+
+                <div class="flex-grow-1">
+                    <div class="mb-2">
+                        <span class="problem-badge">
+                            <i class="bi bi-exclamation-circle-fill me-1"></i> Problem Discussion
+                        </span>
+                    </div>
+
+                    <h4 class="fw-bold mb-3 text-dark">
+                        {{ room.post.title }}
+                    </h4>
+
+                    <div class="chat-meta-box">
+                        <small class="text-muted d-block lh-base">
+                            {% if student.id == room.post.student.id %}
+                            Problem posted by: <b class="text-dark">You</b>
+                            {% else %}
+                            Problem posted by: <b class="text-dark">{{ room.post.student.username }}</b>
+                            {% endif %}
+
+                            <br>
+
+                            Chat Room:
+                            <span class="text-dark fw-medium">
+                                {% if student.id == room.requester.id %}You{% else %}{{ room.requester.username }}
+                                {% endif %}
+                            </span>
+                            <span class="mx-1 text-muted">↔</span>
+                            <span class="text-dark fw-medium">
+                                {% if student.id == room.helper.id %}You{% else %}{{ room.helper.username }}{% endif %}
+                            </span>
+                        </small>
+                    </div>
+                </div>
+
+                <a href="{% url 'my_chats' %}"
+                    class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-sm ms-3">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+
             </div>
 
-        {% empty %}
-            <p class="text-center text-muted">No messages yet</p>
-        {% endfor %}
+            <!-- CHAT BODY -->
+            <div class="chat-body">
+
+                {% for msg in messages %}
+
+                <div class="mb-3 d-flex flex-column">
+
+                    {% if msg.sender.id == student.id %}
+
+                    <!-- MY MESSAGE -->
+                    <div class="message-own shadow-sm">
+                        <div class="message-text">{{ msg.message }}</div>
+                        <div class="message-time text-end text-white-50">{{ msg.timestamp|time:"h:i A" }}</div>
+                    </div>
+
+                    {% else %}
+
+                    <!-- OTHER MESSAGE -->
+                    <div class="message-other shadow-sm">
+                        <small class="fw-bold d-block mb-1" style="color: #4f46e5;">{{ msg.sender.username }}</small>
+                        <div class="message-text">{{ msg.message }}</div>
+                        <div class="message-time text-muted">{{ msg.timestamp|time:"h:i A" }}</div>
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                {% empty %}
+
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-chat-dots fs-1 d-block mb-2 text-secondary" style="opacity: 0.5;"></i>
+                    No messages yet. Say hi to start the conversation!
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- CHAT FOOTER (INPUT BOX) WITH FREEZE LOGIC -->
+            <div class="chat-footer">
+                {% if room.post.status == "RESOLVED" %}
+                <div class="text-center py-2.5 text-danger fw-semibold bg-danger-subtle rounded-3 small">
+                    <i class="bi bi-lock-fill me-1"></i> This conversation is closed because the problem is resolved.
+                </div>
+                {% else %}
+                <form method="POST" action="{% url 'chatroom' room.id %}" class="d-flex gap-2 align-items-center"
+                    id="chat-form">
+                    {% csrf_token %}
+                    <textarea name="message" class="form-control chat-input"
+                        placeholder="Type your message here... (Shift+Enter for new line)" required autocomplete="off"
+                        rows="1"
+                        style="resize: none; border-radius: 16px; min-height: 42px; max-height: 150px; overflow-y: auto;"></textarea>
+                    <button type="submit" class="btn-send">
+                        <i class="bi bi-send-fill" style="margin-left: 2px;"></i>
+                    </button>
+                </form>
+
+                {% endif %}
+            </div>
+
+
+        </div>
 
     </div>
 
-    <!-- INPUT BOX -->
-    <form method="POST" class="chat-input">
-        {% csrf_token %}
+    <!-- JavaScript to auto-scroll and handle textarea Enter key -->
+    <script>
+        var chatBody = document.querySelector('.chat-body');
+        if (chatBody) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
 
-        <input type="text" name="message" placeholder="Type your message..." required>
+        var tx = document.querySelector('.chat-input');
+        var form = document.getElementById('chat-form');
 
-        <button type="submit">Send</button>
-    </form>
+        if (tx && form) {
+            tx.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); 
+                    if (tx.value.trim() !== "") {
+                        form.submit(); 
+                    }
+                }
+            });
 
-</div>
+            tx.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        }
+    </script>
 
-{% endblock %}
+
+</body>
+
+</html>

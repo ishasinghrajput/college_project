@@ -14,20 +14,16 @@ def myposts(request):
     if 'student_id' not in request.session:
         return redirect('login')
 
-    current_student = Student.objects.get(
-        id=request.session['student_id']
-    )
+    student = Student.objects.get(id=request.session['student_id'])
 
-    posts = Post.objects.filter(
-        student=current_student
-    ).order_by('-created_at')
+    posts = Post.objects.filter(student=student).order_by('-created_at')
 
     help_requests = HelpRequest.objects.filter(
-        post__student=current_student
-    ).order_by('-created_at')   # ✅ FIXED HERE
+        post__student=student
+    ).select_related('helper', 'post')
 
     return render(request, 'myposts.html', {
-        'student': current_student,
+        'student': student,
         'posts': posts,
         'help_requests': help_requests
     })
@@ -49,23 +45,44 @@ def helpothers(request):
         'posts': posts
     })
 
-# LOGGED IN USER DASHBOARD (FETCHES ALL CAMPUS POSTS)
 def dashboard(request):
     if 'student_id' not in request.session:
         return redirect('login')
+
+    current_student = Student.objects.get(id=request.session['student_id'])
+    all_posts = Post.objects.exclude(status="RESOLVED").order_by('-created_at')
+
+    for post in all_posts:
+        # Check karein agar koi request pending ya accepted hai
+        existing_request = HelpRequest.objects.filter(post=post, helper=current_student).first()
         
-    logged_in_id = request.session['student_id']
-    current_student = Student.objects.get(id=logged_in_id)
-    
-    # Database se saare posts fetch karke dashboard par bhejne ke liye (Newest First)
-    all_posts = Post.objects.filter(status="OPEN").order_by('-created_at')
-    
-    context = {
+        if existing_request:
+            post.has_requested = True
+            post.is_accepted = existing_request.is_accepted
+            
+            if existing_request.is_accepted:
+                active_room = ChatRoom.objects.filter(post=post, helper=current_student).first()
+                if active_room:
+                    post.active_room_id = active_room.id  # ChatRoom ki sahi ID mil gayi
+        else:
+            post.has_requested = False
+            post.is_accepted = False
+
+        # Check karein agar post kisi aur ne accept kar li hai
+        if post.status == "IN_PROGRESS" and not post.is_accepted:
+            post.taken_by_others = True
+            accepted_req = HelpRequest.objects.filter(post=post, is_accepted=True).select_related('helper').first()
+            if accepted_req:
+                post.current_helper_name = accepted_req.helper.username
+        else:
+            post.taken_by_others = False
+
+    return render(request, 'dashboard.html', {
         'student': current_student,
-        'all_posts': all_posts  # Template loop ke liye data pass kiya
-    }
-    
-    return render(request, 'dashboard.html', context)
+        'all_posts': all_posts,
+    })
+
+
 
 
 def staff_dashboard(request):
@@ -155,23 +172,15 @@ def send_help_request(request, post_id):
     helper = Student.objects.get(id=request.session['student_id'])
     post = get_object_or_404(Post, id=post_id)
 
-    # apna post nahi help kar sakta
     if post.student == helper:
         messages.error(request, "You cannot help your own post!")
         return redirect('dashboard')
 
-    # duplicate request check
-    already = HelpRequest.objects.filter(
-        post=post,
-        helper=helper
-    ).exists()
+    already = HelpRequest.objects.filter(post=post, helper=helper).exists()
 
     if not already:
-        HelpRequest.objects.create(
-            post=post,
-            helper=helper
-        )
-        messages.success(request, "Help request sent!")
+        HelpRequest.objects.create(post=post, helper=helper)
+        messages.success(request, "Request sent!")
 
     return redirect('dashboard')
 
@@ -328,20 +337,17 @@ def delete_post(request, post_id):
 
 def delete_student(request, student_id):
 
-    # login check
     if 'student_id' not in request.session:
         return redirect('login')
 
     admin = Student.objects.get(id=request.session['student_id'])
 
-    # only admin allowed
     if admin.role != "ADMIN":
         messages.error(request, "Access Denied")
         return redirect('dashboard')
 
     student = get_object_or_404(Student, id=student_id)
 
-    # safety: admin or staff delete nahi hoga (optional safeguard)
     if student.role == "USER":
         student.delete()
         messages.success(request, "Student deleted successfully")
@@ -349,65 +355,83 @@ def delete_student(request, student_id):
         messages.error(request, "You cannot delete this user")
 
 
-#about_olatform
 def about_platform(request):
     return render(request, 'about.html')
 
 
-#chat
+
 def accept_chat_request(request, request_id):
     if 'student_id' not in request.session:
         return redirect('login')
 
-    current_student = Student.objects.get(id=request.session['student_id'])
-
+    owner = Student.objects.get(id=request.session['student_id'])
     help_request = get_object_or_404(HelpRequest, id=request_id)
 
-    # only post owner can accept
-    if help_request.post.student != current_student:
+    if help_request.post.student != owner:
+        messages.error(request, "Unauthorized access!")
         return redirect('dashboard')
 
     help_request.is_accepted = True
     help_request.save()
 
-    #CHAT CREATE ONLY AFTER ACCEPT
-    room = ChatRoom.objects.create(
-        post=help_request.post,
-        requester=help_request.post.student,
+    main_post = help_request.post
+    main_post.status = "IN_PROGRESS"
+    main_post.save()  # Database me save hona compulsory hai!
+
+    room, created = ChatRoom.objects.get_or_create(
+        post=main_post,
+        requester=main_post.student,
         helper=help_request.helper
     )
 
-    return redirect('chatroom', room.id)
+    return redirect('chatroom', room_id=room.id)
 
 
-def mark_resolved(request, post_id):
 
+def reopen_post(request, post_id):
     if 'student_id' not in request.session:
         return redirect('login')
 
     owner = Student.objects.get(id=request.session['student_id'])
-    post = get_object_or_404(Post, id=post_id)
+    
+    post = get_object_or_404(Post, id=post_id, student=owner)
+    
+    post.status = "OPEN"
+    post.save()
 
-    # only owner can resolve
-    if post.student != owner:
-        return redirect('dashboard')
+    ChatRoom.objects.filter(post=post).delete()
+
+   
+    HelpRequest.objects.filter(post=post, is_accepted=True).delete()
+    messages.success(request, "🔄 Post reopened! Previous active chat has been cancelled. You can now accept other pending requests.")
+    return redirect('myposts')
+
+
+
+def mark_resolved(request, post_id):
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    owner = Student.objects.get(id=request.session['student_id'])
+    post = get_object_or_404(Post, id=post_id, student=owner)
 
     if post.status == "RESOLVED":
         return redirect('myposts')
 
+    # Status badlein
     post.status = "RESOLVED"
     post.save()
 
-    # find helper from chat
-    chat = ChatRoom.objects.filter(post=post).first()
+    # Accepted HelpRequest se helper ko find karein points dene ke liye
+    accepted_req = HelpRequest.objects.filter(post=post, is_accepted=True).first()
 
-    if chat:
-        helper = chat.helper
-
+    if accepted_req:
+        helper = accepted_req.helper
         points = 10
-
         helper.points += points
         helper.save()
+        messages.success(request, f"🎉 Problem resolved! +{points} points awarded to {helper.username}.")
+   
 
     return redirect('myposts')
 
@@ -418,21 +442,19 @@ def mark_resolved(request, post_id):
 def chatroom(request, room_id):
 
     current_student = Student.objects.get(id=request.session['student_id'])
-
     room = get_object_or_404(ChatRoom, id=room_id)
 
     if request.method == "POST":
+        if room.post.status == "RESOLVED":
+            return redirect('chatroom', room.id)
 
         msg = request.POST.get('message')
 
-        print("DEBUG MSG:", msg)  
-
-        if msg is not None and msg.strip() != "":
-
-           Message.objects.create(
-            room=room,
-            sender=current_student,
-            text=msg   
+        if msg:
+            Message.objects.create(
+                room=room,
+                sender=current_student,
+                message=msg   # IMPORTANT
             )
 
         return redirect('chatroom', room.id)
@@ -445,18 +467,29 @@ def chatroom(request, room_id):
         "student": current_student
     })
 
+# MY CHATS PAGE
 def my_chats(request):
     if 'student_id' not in request.session:
         return redirect('login')
 
     current_student = Student.objects.get(id=request.session['student_id'])
 
-    chat_rooms = ChatRoom.objects.filter(
-        models.Q(requester=current_student) |
-        models.Q(helper=current_student)
-    ).order_by('-created_at')
+    requester_chats = ChatRoom.objects.filter(
+        requester=current_student
+    ).select_related('post', 'helper').order_by('-created_at')
 
-    return render(request, 'my_chats.html', {
-        'chat_rooms': chat_rooms,
-        'student': current_student
-    })
+    helper_chats = ChatRoom.objects.filter(
+        helper=current_student
+    ).select_related('post', 'requester').order_by('-created_at')
+
+    context = {
+        'student': current_student,
+        'requester_chats': requester_chats,
+        'helper_chats': helper_chats
+    }
+
+    return render(request, 'my_chats.html', context)
+
+
+
+

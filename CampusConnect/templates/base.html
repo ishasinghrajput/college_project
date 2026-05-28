@@ -15,7 +15,7 @@
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-
+    <!-- css  -->
     <style>
         .navbar {
             background: #9ab1fc;
@@ -157,7 +157,7 @@
                 <!-- Yellow Coin Icon (Dummy Points) -->
                 <div class="coin-box" title="Total Points">
                     <i class="bi bi-coin text-warning me-2 fs-5"></i>
-                    <span>120 <small class="text-muted fw-normal" style="font-size: 12px;">Pts</small></span>
+                    <span>{{ student.points }}<small class="text-muted fw-normal" style="font-size: 12px;"> Points</small></span>
                 </div>
 
                 <!-- Profile Circle with Dropdown -->
@@ -172,10 +172,8 @@
                             <small class="text-muted d-block">Welcome back,</small>
                             <strong class="text-dark">{{ student.username }}</strong>
                         </li>
-                        <li><a class="dropdown-item py-2" href="#"><i
-                                    class="bi bi-person me-2 text-muted"></i> Profile</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
+                        
+                        <hr class="dropdown-divider">
                         </li>
                         <li><a class="dropdown-item text-danger py-2" href="{% url 'logout' %}"><i
                                     class="bi bi-box-arrow-right me-2"></i> Logout</a></li>

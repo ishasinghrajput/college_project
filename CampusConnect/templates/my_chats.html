@@ -9,141 +9,178 @@
         background: #f4f7fb;
     }
 
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
     .chat-card {
         border: none;
-        border-radius: 16px;
+        border-radius: 18px;
+        background: white;
         transition: 0.2s ease;
-        background: #fff;
     }
 
     .chat-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
     }
 
-    .chat-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #1e293b;
-    }
-
-    .chat-meta {
-        font-size: 13px;
-        color: #64748b;
-    }
-
-    .badge-soft {
-        background: #e0f2fe;
-        color: #0369a1;
-        font-size: 12px;
-        padding: 5px 10px;
+    .chat-badge {
+        padding: 6px 12px;
         border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-requester {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-helper {
+        background: #dcfce7;
+        color: #15803d;
     }
 
     .open-btn {
         border-radius: 10px;
-        padding: 6px 14px;
-        font-size: 13px;
         font-weight: 600;
+        padding: 7px 16px;
     }
 
     .empty-box {
         background: white;
-        border-radius: 16px;
-        padding: 40px;
+        border-radius: 18px;
+        padding: 45px;
         text-align: center;
     }
 </style>
 
 <div class="container py-5">
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold mb-1">My Chats</h3>
-            <p class="text-muted mb-0">Accepted help requests conversations</p>
-        </div>
-
-        <span class="badge bg-dark px-3 py-2 rounded-pill">
-            {{ chat_rooms|length }} Chats
-        </span>
+    <!-- PAGE HEADER -->
+    <div class="mb-5">
+        <h2 class="fw-bold mb-1">My Chats</h2>
+        <p class="text-muted mb-0">
+            Track where you are taking help and where you are helping others.
+        </p>
     </div>
 
-    <!-- CHAT LIST -->
-    {% if chat_rooms %}
+    <!-- MY HELP REQUESTS -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="section-title">📥 Help I Requested</h4>
+            <span class="badge bg-primary rounded-pill">
+                {{ requester_chats|length }} Chats
+            </span>
+        </div>
 
-    <div class="row">
-
-        {% for room in chat_rooms %}
-
-        <div class="col-md-6 mb-3">
-
-            <div class="card chat-card shadow-sm p-3">
-
-                <div class="d-flex justify-content-between align-items-start">
-
-                    <div>
-
-                        <div class="chat-title">
-                            {{ room.post.title }}
-                        </div>
-
-                        <div class="chat-meta mt-1">
-                            Created: {{ room.created_at|date:"d M Y, h:i A" }}
-                        </div>
-
-                        <div class="mt-2">
-                            <span class="badge-soft">
-                                {{ room.post.category }}
+        {% if requester_chats %}
+        <div class="row">
+            {% for room in requester_chats %}
+            <div class="col-md-6 mb-3">
+                <div class="card chat-card p-3 shadow-sm h-100">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="chat-badge badge-requester">
+                                You requested help
                             </span>
+                            <h5 class="fw-bold mt-3 mb-1">{{ room.post.title }}</h5>
+                            <p class="text-muted small mb-2">
+                                {{ room.post.description|truncatechars:90 }}
+                            </p>
                         </div>
-
                     </div>
-
-                </div>
-
-                <hr>
-
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <small class="text-muted">
-                        Chat with:
-                        {% if room.requester == student %}
-                            {{ room.helper.username }}
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block">Helper</small>
+                            <strong>{{ room.helper.username }}</strong>
+                        </div>
+                        {% if room.post.status == "RESOLVED" %}
+                        <a href="{% url 'chatroom' room.id %}" class="btn btn-secondary open-btn">
+                            View Chat
+                        </a>
                         {% else %}
-                            {{ room.requester.username }}
+                        <a href="{% url 'chatroom' room.id %}" class="btn btn-primary open-btn">
+                            Open Chat
+                        </a>
                         {% endif %}
-                    </small>
-
-                    <a href="{% url 'chatroom' room.id %}" class="btn btn-primary open-btn">
-                        Open Chat
-                    </a>
-
+                    </div>
                 </div>
-
             </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-box shadow-sm">
+            <h5 class="fw-bold">No Help Requests Yet</h5>
+            <p class="text-muted mb-0">
+                Chats where others help you will appear here.
+            </p>
+        </div>
+        {% endif %}
+    </div>
 
+    <!-- HELPING OTHERS -->
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="section-title">🤝 People I Am Helping</h4>
+            <span class="badge bg-success rounded-pill">
+                {{ helper_chats|length }} Chats
+            </span>
         </div>
 
-        {% endfor %}
-
+        {% if helper_chats %}
+        <div class="row">
+            {% for room in helper_chats %}
+            <div class="col-md-6 mb-3">
+                <div class="card chat-card p-3 shadow-sm h-100">
+                    <div>
+                        <span class="chat-badge badge-helper">
+                            You are helping
+                        </span>
+                        <h5 class="fw-bold mt-3 mb-1">{{ room.post.title }}</h5>
+                        <p class="text-muted small mb-2">
+                            {{ room.post.description|truncatechars:90 }}
+                        </p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block">Student</small>
+                            <strong>{{ room.requester.username }}</strong>
+                        </div>
+                        <div>
+                            {% if room.post.status == "RESOLVED" %}
+                            <!-- Closed Chat Button -->
+                            <a href="{% url 'chatroom' room.id %}"
+                                class="btn btn-secondary btn-sm rounded-pill px-3 opacity-75">
+                                <i class="bi bi-archive-fill me-1"></i> Closed Chat
+                            </a>
+                            {% else %}
+                            <!-- Active Open Chat Button -->
+                            <a href="{% url 'chatroom' room.id %}"
+                                class="btn btn-warning btn-sm rounded-pill px-3 fw-medium">
+                                <i class="bi bi-chat-dots-fill me-1"></i> Open Chat
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-box shadow-sm">
+            <h5 class="fw-bold">You Are Not Helping Anyone Yet</h5>
+            <p class="text-muted mb-0">
+                Accepted help chats will appear here.
+            </p>
+        </div>
+        {% endif %}
     </div>
-
-    {% else %}
-
-    <!-- EMPTY STATE -->
-    <div class="empty-box shadow-sm">
-
-        <h4 class="fw-bold">No Chats Yet</h4>
-        <p class="text-muted">Once your help request is accepted, chats will appear here.</p>
-
-        <a href="{% url 'dashboard' %}" class="btn btn-dark mt-2">
-            Go to Requests
-        </a>
-
-    </div>
-
-    {% endif %}
 
 </div>
 
