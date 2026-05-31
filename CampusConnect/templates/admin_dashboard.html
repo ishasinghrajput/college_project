@@ -13,7 +13,6 @@
             background: linear-gradient(135deg, #f5f7ff, #eef2ff);
         }
 
-        /* HEADER */
         .dashboard-header {
             background: #ffffff;
             padding: 18px 22px;
@@ -21,7 +20,6 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.06);
         }
 
-        /* CARDS */
         .stat-card {
             border: none;
             border-radius: 16px;
@@ -34,7 +32,6 @@
             box-shadow: 0 12px 25px rgba(0,0,0,0.1);
         }
 
-        /* BUTTONS */
         .action-btn {
             border-radius: 14px;
             font-weight: 600;
@@ -45,7 +42,6 @@
             transform: scale(1.02);
         }
 
-        /* POST CARD */
         .post-card {
             border: none;
             border-radius: 16px;
@@ -72,10 +68,8 @@
 </head>
 
 <body>
-
 <div class="container my-5">
 
-    <!-- HEADER -->
     <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold m-0">
             <i class="bi bi-shield-lock text-primary me-2"></i>
@@ -87,7 +81,6 @@
         </a>
     </div>
 
-    <!-- CARDS -->
     <div class="row mb-4">
 
         <div class="col-md-4">
@@ -113,7 +106,6 @@
 
     </div>
 
-    <!-- ACTION BUTTONS -->
     <div class="row mb-4 text-center">
 
         <div class="col-md-4">
@@ -136,7 +128,6 @@
 
     </div>
 
-    <!-- POSTS SECTION -->
     <div class="mb-3" id="posts">
         <h4 class="section-title">All Posts</h4>
     </div>
@@ -150,22 +141,18 @@
 
         <div class="card-body p-4">
 
-            <!-- TITLE -->
             <h5 class="fw-bold mb-2 text-dark">
                 {{ post.title }}
             </h5>
 
-            <!-- CATEGORY BADGE -->
             <span class="badge bg-gradient bg-info text-dark mb-3 px-3 py-2">
                 {{ post.category }}
             </span>
 
-            <!-- DESCRIPTION -->
             <p class="text-muted small mb-3" style="line-height: 1.6;">
                 {{ post.description|truncatechars:120 }}
             </p>
 
-            <!-- USER INFO -->
             <div class="d-flex align-items-center mb-2">
                 <i class="bi bi-person-circle text-primary me-2 fs-5"></i>
                 <span class="fw-semibold text-dark">
@@ -173,7 +160,6 @@
                 </span>
             </div>
 
-            <!-- DATE -->
             <div class="text-muted small d-flex align-items-center">
                 <i class="bi bi-calendar3 me-2"></i>
                 {{ post.created_at|date:"d M Y" }}
@@ -187,11 +173,7 @@
 {% empty %}
 <p class="text-muted text-center">No posts available</p>
 {% endfor %}
-
-
 </div>
-
 </div>
-
 </body>
 </html>

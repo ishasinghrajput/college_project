@@ -1,14 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import *  # Post table import kar li hai
+from .models import *  
 
-
-# HOME PAGE
 def home(request):
     return render(request, 'home.html')
 
-
-# MY POSTS PAGE
 def myposts(request):
 
     if 'student_id' not in request.session:
@@ -28,171 +24,7 @@ def myposts(request):
         'help_requests': help_requests
     })
 
-#HELPOTHERS
-def helpothers(request):
 
-    if 'student_id' not in request.session:
-        return redirect('login')
-
-    logged_in_id = request.session['student_id']
-
-    current_student = Student.objects.get(id=logged_in_id)
-
-    # FIXED QUERY
-    posts = Post.objects.all().exclude(student=current_student).order_by('-created_at')
-
-    return render(request, 'helpothers.html', {
-        'posts': posts
-    })
-
-def dashboard(request):
-    if 'student_id' not in request.session:
-        return redirect('login')
-
-    current_student = Student.objects.get(id=request.session['student_id'])
-    all_posts = Post.objects.exclude(status="RESOLVED").order_by('-created_at')
-
-    for post in all_posts:
-        # Check karein agar koi request pending ya accepted hai
-        existing_request = HelpRequest.objects.filter(post=post, helper=current_student).first()
-        
-        if existing_request:
-            post.has_requested = True
-            post.is_accepted = existing_request.is_accepted
-            
-            if existing_request.is_accepted:
-                active_room = ChatRoom.objects.filter(post=post, helper=current_student).first()
-                if active_room:
-                    post.active_room_id = active_room.id  # ChatRoom ki sahi ID mil gayi
-        else:
-            post.has_requested = False
-            post.is_accepted = False
-
-        # Check karein agar post kisi aur ne accept kar li hai
-        if post.status == "IN_PROGRESS" and not post.is_accepted:
-            post.taken_by_others = True
-            accepted_req = HelpRequest.objects.filter(post=post, is_accepted=True).select_related('helper').first()
-            if accepted_req:
-                post.current_helper_name = accepted_req.helper.username
-        else:
-            post.taken_by_others = False
-
-    return render(request, 'dashboard.html', {
-        'student': current_student,
-        'all_posts': all_posts,
-    })
-
-
-
-
-def staff_dashboard(request):
-
-    if 'student_id' not in request.session:
-        return redirect('login')
-
-    student = Student.objects.get(id=request.session['student_id'])
-
-    if student.role != "STAFF":
-        messages.error(request, "Access Denied")
-        return redirect('dashboard')
-
-    #THIS IS MISSING (MAIN FIX)
-    posts = Post.objects.all().order_by('-created_at')
-
-    return render(request, 'staff_dashboard.html', {
-        'student': student,
-        'posts': posts
-    })
-
-
-def admin_dashboard(request):
-
-    if 'student_id' not in request.session:
-        return redirect('login')
-
-    student = Student.objects.get(id=request.session['student_id'])
-
-    if student.role != "ADMIN":
-        messages.error(request, "Access Denied")
-        return redirect('dashboard')
-
-    posts = Post.objects.all().order_by('-created_at')
-
-    total_students = Student.objects.filter(role="USER").count()
-    total_staff = Student.objects.filter(role="STAFF").count()
-    total_posts = Post.objects.count()
-
-    return render(request, 'admin_dashboard.html', {
-        'student': student,
-        'posts': posts,
-        'total_students': total_students,
-        'total_staff': total_staff,
-        'total_posts': total_posts
-    })
-
-
-# POST A NEED FORM INTERFACE (SAVES NEW REQUEST)
-def post_need(request):
-    if 'student_id' not in request.session:
-        return redirect('login')
-        
-    # Active logged-in student ka object nikalna taaki navbar login state me rahe
-    logged_in_id = request.session['student_id']
-    current_student = Student.objects.get(id=logged_in_id)
-        
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        category = request.POST.get('category')
-        description = request.POST.get('description')
-        
-        # Table me data save karna
-        Post.objects.create(
-            student=current_student, # Directly passing student object
-            title=title,
-            category=category,
-            description=description
-        )
-        
-        messages.success(request, "Your help request has been posted successfully!")
-        return redirect('dashboard')
-        
-    context = {
-        'student': current_student
-    }
-    return render(request, 'postneed.html', context)
-
-
-
-# HELP NOW CLICK ACTIVITY ACTION HANDLER
-def send_help_request(request, post_id):
-
-    if 'student_id' not in request.session:
-        return redirect('login')
-
-    helper = Student.objects.get(id=request.session['student_id'])
-    post = get_object_or_404(Post, id=post_id)
-
-    if post.student == helper:
-        messages.error(request, "You cannot help your own post!")
-        return redirect('dashboard')
-
-    already = HelpRequest.objects.filter(post=post, helper=helper).exists()
-
-    if not already:
-        HelpRequest.objects.create(post=post, helper=helper)
-        messages.success(request, "Request sent!")
-
-    return redirect('dashboard')
-
-
-# LOGOUT CONTROLLER
-def logout_view(request):
-    request.session.flush()  # Clear sessions data securely
-    messages.success(request, "You have been logged out successfully.")
-    return redirect('login')
-
-
-# LOGIN PROCESS
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -212,10 +44,6 @@ def login_page(request):
             request.session['student_name'] = student.username
 
             request.session['role'] = student.role
-
-            
-
-            # ROLE BASED REDIRECT
 
             if student.role == "USER":
                 messages.success(request,"Welcome Ready to connect and help others?")
@@ -266,6 +94,159 @@ def signup_page(request):
 
     return render(request, 'signup.html')
 
+
+def helpothers(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    logged_in_id = request.session['student_id']
+
+    current_student = Student.objects.get(id=logged_in_id)
+
+    posts = Post.objects.all().exclude(student=current_student).order_by('-created_at')
+
+    return render(request, 'helpothers.html', {
+        'posts': posts
+    })
+
+def dashboard(request):
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    current_student = Student.objects.get(id=request.session['student_id'])
+    all_posts = Post.objects.exclude(status="RESOLVED").order_by('-created_at')
+
+    for post in all_posts:
+        existing_request = HelpRequest.objects.filter(post=post, helper=current_student).first()
+        
+        if existing_request:
+            post.has_requested = True
+            post.is_accepted = existing_request.is_accepted
+            
+            if existing_request.is_accepted:
+                active_room = ChatRoom.objects.filter(post=post, helper=current_student).first()
+                if active_room:
+                    post.active_room_id = active_room.id
+        else:
+            post.has_requested = False
+            post.is_accepted = False
+
+        if post.status == "IN_PROGRESS" and not post.is_accepted:
+            post.taken_by_others = True
+            accepted_req = HelpRequest.objects.filter(post=post, is_accepted=True).select_related('helper').first()
+            if accepted_req:
+                post.current_helper_name = accepted_req.helper.username
+        else:
+            post.taken_by_others = False
+
+    return render(request, 'dashboard.html', {
+        'student': current_student,
+        'all_posts': all_posts,
+    })
+
+
+
+
+def staff_dashboard(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    student = Student.objects.get(id=request.session['student_id'])
+
+    if student.role != "STAFF":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    posts = Post.objects.all().order_by('-created_at')
+
+    return render(request, 'staff_dashboard.html', {
+        'student': student,
+        'posts': posts
+    })
+
+
+def admin_dashboard(request):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    student = Student.objects.get(id=request.session['student_id'])
+
+    if student.role != "ADMIN":
+        messages.error(request, "Access Denied")
+        return redirect('dashboard')
+
+    posts = Post.objects.all().order_by('-created_at')
+
+    total_students = Student.objects.filter(role="USER").count()
+    total_staff = Student.objects.filter(role="STAFF").count()
+    total_posts = Post.objects.count()
+
+    return render(request, 'admin_dashboard.html', {
+        'student': student,
+        'posts': posts,
+        'total_students': total_students,
+        'total_staff': total_staff,
+        'total_posts': total_posts
+    })
+
+
+def post_need(request):
+    if 'student_id' not in request.session:
+        return redirect('login')
+        
+    logged_in_id = request.session['student_id']
+    current_student = Student.objects.get(id=logged_in_id)
+        
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        category = request.POST.get('category')
+        description = request.POST.get('description')
+        
+        Post.objects.create(
+            student=current_student, 
+            title=title,
+            category=category,
+            description=description
+        )
+        
+        messages.success(request, "Your help request has been posted successfully!")
+        return redirect('dashboard')
+        
+    context = {
+        'student': current_student
+    }
+    return render(request, 'postneed.html', context)
+
+
+def send_help_request(request, post_id):
+
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    helper = Student.objects.get(id=request.session['student_id'])
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.student == helper:
+        messages.error(request, "You cannot help your own post!")
+        return redirect('dashboard')
+
+    already = HelpRequest.objects.filter(post=post, helper=helper).exists()
+
+    if not already:
+        HelpRequest.objects.create(post=post, helper=helper)
+        messages.success(request, "Request sent!")
+
+    return redirect('dashboard')
+
+
+ 
+def logout_view(request):
+    request.session.flush() 
+    messages.success(request, "You have been logged out successfully.")
+    return redirect('login')
 
 
 def manage_students(request):
@@ -376,7 +357,7 @@ def accept_chat_request(request, request_id):
 
     main_post = help_request.post
     main_post.status = "IN_PROGRESS"
-    main_post.save()  # Database me save hona compulsory hai!
+    main_post.save()  
 
     room, created = ChatRoom.objects.get_or_create(
         post=main_post,
@@ -418,11 +399,9 @@ def mark_resolved(request, post_id):
     if post.status == "RESOLVED":
         return redirect('myposts')
 
-    # Status badlein
     post.status = "RESOLVED"
     post.save()
 
-    # Accepted HelpRequest se helper ko find karein points dene ke liye
     accepted_req = HelpRequest.objects.filter(post=post, is_accepted=True).first()
 
     if accepted_req:
@@ -432,7 +411,6 @@ def mark_resolved(request, post_id):
         helper.save()
         messages.success(request, f"🎉 Problem resolved! +{points} points awarded to {helper.username}.")
    
-
     return redirect('myposts')
 
 
@@ -467,7 +445,7 @@ def chatroom(request, room_id):
         "student": current_student
     })
 
-# MY CHATS PAGE
+
 def my_chats(request):
     if 'student_id' not in request.session:
         return redirect('login')

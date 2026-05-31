@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +21,6 @@
             background: white;
         }
 
-        /* Premium Light Header */
         .chat-header {
             background: #ffffff;
             color: #1e293b;
@@ -31,7 +29,6 @@
             border-radius: 16px 16px 0 0;
         }
 
-        /* Problem Info Box at Top */
         .problem-badge {
             background-color: #eff6ff;
             color: #2563eb;
@@ -49,7 +46,6 @@
             border-left: 4px solid #6366f1;
         }
 
-        /* Clean Chat Body */
         .chat-body {
             background: #fdfdfd;
             height: 500px;
@@ -57,7 +53,6 @@
             padding: 24px;
         }
 
-        /* Modern Light Purple Bubble for Own Messages */
         .message-own {
             background: #6366f1;
             color: white;
@@ -68,7 +63,6 @@
             font-size: 0.95rem;
         }
 
-        /* Soft Gray Bubble for Other Messages */
         .message-other {
             background: #f1f5f9;
             color: #334155;
@@ -83,7 +77,6 @@
             margin-top: 4px;
         }
 
-        /* Chat Footer Form styling */
         .chat-footer {
             background: white;
             padding: 16px 24px;
@@ -134,7 +127,6 @@
 
         <div class="chat-wrapper shadow-sm rounded-4 overflow-hidden">
 
-            <!-- HEADER -->
             <div class="chat-header d-flex justify-content-between align-items-start">
 
                 <div class="flex-grow-1">
@@ -178,7 +170,6 @@
 
             </div>
 
-            <!-- CHAT BODY -->
             <div class="chat-body">
 
                 {% for msg in messages %}
@@ -186,16 +177,12 @@
                 <div class="mb-3 d-flex flex-column">
 
                     {% if msg.sender.id == student.id %}
-
-                    <!-- MY MESSAGE -->
                     <div class="message-own shadow-sm">
                         <div class="message-text">{{ msg.message }}</div>
                         <div class="message-time text-end text-white-50">{{ msg.timestamp|time:"h:i A" }}</div>
                     </div>
 
                     {% else %}
-
-                    <!-- OTHER MESSAGE -->
                     <div class="message-other shadow-sm">
                         <small class="fw-bold d-block mb-1" style="color: #4f46e5;">{{ msg.sender.username }}</small>
                         <div class="message-text">{{ msg.message }}</div>
@@ -203,21 +190,16 @@
                     </div>
 
                     {% endif %}
-
                 </div>
 
                 {% empty %}
-
                 <div class="text-center text-muted py-5">
                     <i class="bi bi-chat-dots fs-1 d-block mb-2 text-secondary" style="opacity: 0.5;"></i>
                     No messages yet. Say hi to start the conversation!
                 </div>
-
                 {% endfor %}
-
             </div>
 
-            <!-- CHAT FOOTER (INPUT BOX) WITH FREEZE LOGIC -->
             <div class="chat-footer">
                 {% if room.post.status == "RESOLVED" %}
                 <div class="text-center py-2.5 text-danger fw-semibold bg-danger-subtle rounded-3 small">
@@ -238,13 +220,8 @@
 
                 {% endif %}
             </div>
-
-
         </div>
-
     </div>
-
-    <!-- JavaScript to auto-scroll and handle textarea Enter key -->
     <script>
         var chatBody = document.querySelector('.chat-body');
         if (chatBody) {
@@ -270,8 +247,5 @@
             });
         }
     </script>
-
-
 </body>
-
 </html>

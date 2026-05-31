@@ -2,8 +2,6 @@
 {% load static %}
 {% block extra_css %}
 <style>
-/*home page css*/
-{% comment %} hero section custom css {% endcomment %}
     body{
         background:#f7f8ff;
     }
@@ -82,10 +80,6 @@
         max-width:500px;
     }
 
-/* Used in:
-   - templates/home.html
-*/
-
 .hero-avatar{
     width: 45px;
     height: 45px;
@@ -93,20 +87,15 @@
 }
 
     
-
-
-
-{% comment %} FOOTER  CSS {% endcomment %}
-/* FOOTER */
-
 .site-footer{
     background: #9ab1fc;
-    background: radial-gradient(circle, rgba(154, 177, 252, 1) 0%, rgba(178, 196, 253, 1) 24%, rgba(255, 255, 255, 1) 100%);
+    background: radial-gradient
+    (circle, rgba(154, 177, 252, 1) 0%,
+    rgba(178, 196, 253, 1) 24%,
+    rgba(255, 255, 255, 1) 100%);
     color: #666;
     border-top: 1px solid #dfe3ff;
 }
-
-/* TITLE */
 
 .footer-title{
     color: #222;
@@ -122,24 +111,17 @@
     position: absolute;
     left: 0;
     bottom: 0;
-
     width: 45px;
     height: 3px;
-
     border-radius: 10px;
-
     background: #6c63ff;
 }
-
-/* TEXT */
 
 .brand-text{
     line-height: 1.8;
     font-size: 0.95rem;
     color: #666;
 }
-
-/* CARD */
 
 .contributor-card{
     background: white;
@@ -155,8 +137,6 @@
     transform: translateY(-6px);
 }
 
-/* IMAGE */
-
 .contributor-avatar{
     width: 90px;
     height: 90px;
@@ -166,7 +146,6 @@
     border: 4px solid #6c63ff;
 }
 
-/* NAME */
 
 .contributor-name{
     color: #222;
@@ -175,15 +154,11 @@
     margin-bottom: 8px;
 }
 
-/* ROLE */
-
 .contributor-role{
     color: #666;
     font-size: 0.85rem;
     line-height: 1.6;
 }
-
-/* ICONS */
 
 .social-links{
     display: flex;
@@ -215,8 +190,6 @@
 {% endblock  %}
 
 {% block content %}
-
-<!-- HERO SECTION -->
 <section class="py-3">
 
     <div class="container">
@@ -225,17 +198,14 @@
 
             <div class="row align-items-center">
 
-                <!-- LEFT SIDE -->
                 <div class="col-lg-6">
 
-                    <!-- BADGE -->
                     <div class="custom-badge mb-4">
 
                         Welcome to Campus Help Hub 👋
 
                     </div>
 
-                    <!-- TITLE -->
                     <h1 class="hero-title mb-4">
 
                         Your Smart <br>
@@ -246,16 +216,12 @@
 
                     </h1>
 
-                    <!-- TEXT -->
-
                     <p class="hero-text">
 
                         Post your needs, connect with the right people,
                         and earn reward points by helping others.
 
                     </p>
-
-                    <!-- BUTTONS -->
 
                     <div class="mt-4">
 
@@ -278,7 +244,6 @@
                     </div>
                     
 
-                    <!-- USERS -->
                 <div class="mt-5 d-flex align-items-center gap-3">
                     <div class="d-flex">
                         <img src="{% static 'image/man2.png' %}"class="hero-avatar rounded-circle border border-light">
@@ -289,8 +254,6 @@
                     <span class="text-secondary">Trusted by happy users</span>
                 </div>
             </div>
-
-                <!-- RIGHT SIDE -->
 
                 <div class="col-lg-6 text-center">
 
@@ -307,15 +270,12 @@
 
 </section>
 
-
-<!--FOOTER-->
 <footer class="site-footer mt-auto pt-5 pb-4">
 
     <div class="container">
 
         <div class="row justify-content-between align-items-start">
 
-            <!-- LEFT SIDE -->
             <div class="col-lg-3 mb-4">
 
                 <h5 class="footer-title">
@@ -329,7 +289,6 @@
 
             </div>
 
-            <!-- RIGHT SIDE -->
             <div class="col-lg-9">
 
                 <h5 class="footer-title">
@@ -337,8 +296,7 @@
                 </h5>
 
                 <div class="row g-4">
-                    
-                    <!-- CARD 1 -->
+                
                     <div class="col-lg-4 col-md-6">
 
                         <div class="contributor-card">
@@ -423,7 +381,6 @@
 
                     </div>
 
-                    <!-- CARD 3 -->
                     <div class="col-lg-4 col-md-6">
 
                         <div class="contributor-card">
@@ -471,7 +428,6 @@
             </div>
 
         </div>
-        <!-- BOTTOM -->
         <div class="footer-bottom">
 
             © 2026 Campus Help Hub. All Rights Reserved.

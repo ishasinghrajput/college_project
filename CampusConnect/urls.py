@@ -12,34 +12,17 @@ urlpatterns = [
     path('hellpothers/', views.helpothers, name='helpothers'),   
     path('login/', views.login_page, name='login'),
     path('signup/', views.signup_page, name='signup'),
-    
-    # 1. for opening and save new post (Need Form)
     path('post-need/', views.post_need, name='post_need'),
     path('resolve/<int:post_id>/', views.mark_resolved, name='mark_resolved'),
-
-    # CHAT SYSTEM (IMPORTANT ADD)
     path('accept/<int:request_id>/', views.accept_chat_request, name='accept_chat_request'),
     path('chat/<int:room_id>/', views.chatroom, name='chatroom'),
     path('my-chats/', views.my_chats, name='my_chats'),
     path('reopen-post/<int:post_id>/', views.reopen_post, name='reopen_post'),
-
-
-    #for sending request(with Post ID)
     path('send-help-request/<int:post_id>/', views.send_help_request, name='send_help_request'),
-    
-    #Securely logout
     path('logout/', views.logout_view, name='logout'),
-
     path('manage-students/', views.manage_students, name='manage_students'),
-
     path('staff-list/', views.staff_list, name='staff_list'),
-
     path('manage-posts/', views.manage_posts, name='manage_posts'),
-
     path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
-    path(
-        'delete-student/<int:student_id>/',
-        views.delete_student,
-        name='delete_student'
-    ),
+    path('delete-student/<int:student_id>/',views.delete_student,name='delete_student'),
 ]
